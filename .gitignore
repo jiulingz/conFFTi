@@ -1,0 +1,20 @@
+# Exclude all files, then include in only the required ones, or by hand
+*
+!scripts/
+!scripts/*
+!src/
+!src/*
+
+# Allow for Verilog and System Verilog files
+!*.sv
+!*.v
+!*.vh
+
+# Allow for Matlab files
+!*.m
+
+# Allow for gitignore files
+!.gitignore
+
+# Allow for readme files
+!/README.md
