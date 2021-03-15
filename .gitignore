@@ -19,5 +19,6 @@
 # Allow for readme files
 !/README.md
 
-# Allow for cpp files
+# Allow for .cpp and .hex files
 !*.cpp
+!*.hex
