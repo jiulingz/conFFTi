@@ -6,13 +6,11 @@
 #define _USE_MATH_DEFINES
 
 #include <stdio.h>
-#include <errno.h>
 #include <math.h>
 
 void sintable(const char* filename, int pw, int ow) {
-	FILE* table_file;
-	errno_t err;
-	if ((err = fopen_s(&table_file, filename, "w")) != 0) {
+	FILE* table_file = fopen(filename, "w");
+	if (table_file == NULL) {
 		fprintf(stderr, "Cannot open file: %s for writing data.", filename);
 		return;
 	}
