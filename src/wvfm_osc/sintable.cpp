@@ -1,5 +1,6 @@
 // reference: https://github.com/ZipCPU/cordic/blob/master/sw/sintable.cpp
-// Creates a look-up table for computing sine values.
+// Creates a look-up table for computing sine values. Current version writes
+// values from the entire sine wave but goal is to implement quarter look-up.
 // Default values for phase bits = 8 and output bits = 24. Edit these values
 // in main if needed.
 
@@ -18,12 +19,13 @@ void sintable(const char* filename, int pw, int ow) {
 	int nc = (ow + 3) / 4;
 	long max_val = (1l << (ow - 1)) - 1l;
 	for (int i = 0; i < table_entries; i++) {
-		double ph;
-		ph = 2 * M_PI * (double)i / (double)table_entries;
+		double ph = 2 * M_PI * (double)i / (double)table_entries;
+		// entries into the sine LUT are percentages of max_val
 		long val = (long)max_val * sin(ph);
 		if (i % 8 == 0) {
 			fprintf(table_file, "%s@%08x ", (i != 0) ? "\n" : "", i);
 		}
+		// mask the computed value so that it does not exceed max_val
 		fprintf(table_file, "%0*lx ", nc, val & max_val);
 	}
 	fprintf(table_file, "\n");
