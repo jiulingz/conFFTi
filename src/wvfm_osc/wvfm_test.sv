@@ -42,10 +42,6 @@ module sinwave_test();
 		  en <= 1'b1;
 		  @(posedge clk);
 		  reset <= 1'b0;
-		  @(posedge clk);
-		  @(posedge clk);
-		  @(posedge clk);
-		  @(posedge clk);
 	 end
 
 endmodule: sinwave_test

@@ -13,9 +13,9 @@ module sinewave
 	 
 	 initial out = 0;
 	 always @(posedge clk)
-	     if (reset)
-		      out <= 0;
-        else if (en)
-	         out <= lut[phase];
+	 if (reset)
+	     out <= 0;
+    else if (en)
+	     out <= lut[phase];
 	 
 endmodule
