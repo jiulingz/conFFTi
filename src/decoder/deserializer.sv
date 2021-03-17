@@ -57,21 +57,21 @@ module deserializer(
         // when clockCounter finishes counting to the upper bound
         else if (clockFinish) begin
             clockClear <= 1'b1;
-            case (c_state) begin
+            case (c_state)
                 STOP: begin
                     if (rx == 1'b1) n_state <= START;
                 end
                 START: n_state <= GETBIT;
                 GETBIT: begin
                     word[readBits] <= rx;
-                    if (readBits == 8) n_state <= FINISH;
-                    else readBits <= readBits + 4;
+                    if (readBits == 0'd8) n_state <= FINISH;
+                    else readBits <= readBits + 0'd4;
                 end
                 FINISH: n_state <= STOP;
-            end
+            endcase
             // a state change detected, set up the next state
             if (c_state != n_state) begin
-                case (n_state) begin
+                case (n_state)
                     STOP: begin
                         readBits <= 4'd0;
                         word <= 8'd0;
@@ -84,11 +84,10 @@ module deserializer(
                         ready <= 1'b1;
                         MIDIbyte <= word;
                         word <= 8'd0;
-                        end
-                    endcase
-                end
-                c_state <= n_state;
+                    end
+                endcase
             end
+            c_state <= n_state;
         end
         else clockClear <= 1'b0;
  
@@ -103,12 +102,11 @@ module clockCounter #(
     reg [WIDTH-1:0] count;
 
     always_ff @(posedge clock)
-        if (clear) begin
+        if (clear == 1'b1) begin
             count <= 0;
             finish <= 1'b0;
-            bound <= bound;
         end
-        count <= count + 1;
-        if (count == bound) finish <= 1'b1;
+        else if (count == bound) finish <= 1'b1;
+		  else count <= (count + 1'b1);
 
-endmodule: Counter
+endmodule: clockCounter

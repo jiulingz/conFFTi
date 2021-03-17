@@ -29,16 +29,16 @@ module visualizer (
   logic [31 :0] result;
 
   deserializer MIDI_Deserializer(
-    .rx(UART_RXD),
+    .rx(GPIO),
     .clock(CLOCK_50),
     .reset(1'b0),
     .ready,
     .MIDIbyte(newByte)
   );
 
-  Register #512 RegisterFile(.D({RegisterFileOut[503:0], newByte},
+  Register #512 RegisterFile(.D({RegisterFileOut[503:0], newByte}),
                              .Q(RegisterFileOut), .en(ready),
-                             .clear(1'b0), .clock(CLOCK_50)));
+                             .clear(1'b0), .clock(CLOCK_50));
 
   // controlling which page you are one. 4 out of 64 char at one time
   always_comb begin
