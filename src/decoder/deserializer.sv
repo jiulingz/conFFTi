@@ -15,7 +15,7 @@ module deserializer(
     input  logic        clock,
     input  logic        reset,
     output logic        ready,
-    output logic [31:0] MIDIbyte
+    output logic [7 :0] MIDIbyte
 );
 
     // counter bound at different FSM states
@@ -31,7 +31,7 @@ module deserializer(
         FINISH = 2'b11
     } c_state, n_state;
 
-    reg   [31:0] word;
+    reg   [ 7:0] word;
     reg   [ 3:0] readBits;
     logic        clockEn, clockClear, clockFinish;
     logic [11:0] bound;
@@ -65,7 +65,7 @@ module deserializer(
                 GETBIT: begin
                     word[readBits] <= rx;
                     if (readBits == 0'd8) n_state <= FINISH;
-                    else readBits <= readBits + 0'd4;
+                    else readBits <= readBits + 0'd1;
                 end
                 FINISH: n_state <= STOP;
             endcase
