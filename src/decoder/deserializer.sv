@@ -32,9 +32,9 @@ module deserializer(
     } c_state, n_state;
 
     logic   [ 7:0] word;
-    logic   [ 3:0] readBits;
-    logic        clockEn, clockClear, clockFinish;
-    logic [11:0] bound;
+    reg     [ 3:0] readBits;
+    logic          clockEn, clockClear, clockFinish;
+    logic   [11:0] bound;
 
     // when clockCounter reaches upper bound, a clockFinish signal flags high
     clockCounter #(
@@ -64,9 +64,13 @@ module deserializer(
                 end
                 START: n_state <= GETBIT;
                 GETBIT: begin
-                    word[readBits] <= rx;
-                    if (readBits >= 4'b1000) n_state <= FINISH;
-                    else readBits <= readBits + 1;
+                    if (!clockClear) begin
+                        if (readBits >= 4'b1000) n_state <= FINISH;
+                        else begin
+                            word[readBits] <= rx;
+                            readBits <= readBits + 1;
+                        end
+                    end
                 end
                 FINISH: n_state <= STOP;
             endcase

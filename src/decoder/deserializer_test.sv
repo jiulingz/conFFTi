@@ -25,24 +25,10 @@ module top ();
   end
 
   initial begin
-    while(1) begin
-      #400 if (isNew)
-            $display($time,, 
-                     "in:%b ", serialOut, 
-                     "cur_s:%s ", R.c_state,
-                     "n_s:%s ", R.n_state,
-                     "bitcnt:%b ", R.readBits,
-                     "clockFinish:%b ", R.clockFinish,
-                     "out: %c/%b", messageByte, messageByte);
-
-    end
-  end
-
-  initial begin
     reset <= 1'b1;
     @(posedge clock);
     reset <= 1'b0;
-    #10000000
+    #5000000
   $finish;
   end
 
