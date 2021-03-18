@@ -1,15 +1,14 @@
 `default_nettype none
 
-module top (
-  input  logic        CLOCK_50
-);
-  logic clock, reset, serialOut, isNew;
+module top ();
+
+  logic clock, clock50, reset, serialOut, isNew;
   logic [7:0] messageByte;
 
   sender S(.*);
   deserializer R(
-    .rx(GPIO[0]),
-    .clock(CLOCK_50),
+    .rx(serialOut),
+    .clock(clock50),
     .reset,
     .ready(isNew),
     .MIDIbyte(messageByte)
@@ -18,7 +17,11 @@ module top (
   initial begin
     clock = 0;
     forever #1600 clock = ~clock;
+  end
 
+  initial begin
+    clock50 = 0;
+    forever #1 clock50 = ~clock50;
   end
 
   initial begin
@@ -39,7 +42,7 @@ module top (
     reset <= 1'b1;
     @(posedge clock);
     reset <= 1'b0;
-    #100000
+    #10000000
   $finish;
   end
 

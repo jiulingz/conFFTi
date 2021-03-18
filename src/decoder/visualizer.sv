@@ -17,7 +17,7 @@
  */
 module visualizer (
   input  logic        CLOCK_50,
-  input  logic        GPIO,           // serialIn
+  input  logic        GPIO_0,         // serialIn
   input  logic [17:0] SW,             // reset-SW17, displayGroup-SW[3:0]
   output logic [7:0]  LEDG,           // done-LEDG[0]
   output logic [6:0]  HEX0, HEX1, HEX2, HEX3,  // message in HEX
@@ -25,12 +25,12 @@ module visualizer (
 );
 
   logic done, ready;
-  logic [31 :0] newByte;
+  logic [ 7 :0] newByte;
   logic [511:0] RegisterFileOut;
   logic [31 :0] result;
 
   deserializer MIDI_Deserializer(
-    .rx(GPIO[0]),
+    .rx(GPIO_0),
     .clock(CLOCK_50),
     .reset(1'b0),
     .ready,

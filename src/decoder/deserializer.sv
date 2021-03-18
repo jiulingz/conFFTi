@@ -31,16 +31,16 @@ module deserializer(
         FINISH = 2'b11
     } c_state, n_state;
 
-    reg   [ 7:0] word;
-    reg   [ 3:0] readBits;
+    logic   [ 7:0] word;
+    logic   [ 3:0] readBits;
     logic        clockEn, clockClear, clockFinish;
     logic [11:0] bound;
 
     // when clockCounter reaches upper bound, a clockFinish signal flags high
     clockCounter #(
-        .WIDTH($bits(SAMPLE_RATE))
+        .WIDTH(12)
     ) ClockCounter (
-        .clock,
+        .clock(clock),
         .clear(clockClear),
         .bound(bound),
         .finish(clockFinish)
@@ -60,12 +60,13 @@ module deserializer(
             case (c_state)
                 STOP: begin
                     if (rx == 1'b1) n_state <= START;
+                    else n_state <= STOP;
                 end
                 START: n_state <= GETBIT;
                 GETBIT: begin
                     word[readBits] <= rx;
-                    if (readBits == 0'd8) n_state <= FINISH;
-                    else readBits <= readBits + 0'd1;
+                    if (readBits >= 4'b1000) n_state <= FINISH;
+                    else readBits <= readBits + 1;
                 end
                 FINISH: n_state <= STOP;
             endcase

@@ -214,13 +214,13 @@ module SevenSegmentControl
      input  logic [3:0] BCH3, BCH2, BCH1, BCH0);
 
     // run SevenSegmentDigit with given input values
-    SevenSegmentDigit b2sd0(.bch(BCH0), .segment(HEX0), .blank(0));
-    SevenSegmentDigit b2sd1(.bch(BCH1), .segment(HEX1), .blank(0));
-    SevenSegmentDigit b2sd2(.bch(BCH2), .segment(HEX2), .blank(0));
-    SevenSegmentDigit b2sd3(.bch(BCH3), .segment(HEX3), .blank(0));
-    SevenSegmentDigit b2sd4(.bch(BCH4), .segment(HEX4), .blank(0));
-    SevenSegmentDigit b2sd5(.bch(BCH5), .segment(HEX5), .blank(0));
-    SevenSegmentDigit b2sd6(.bch(BCH6), .segment(HEX6), .blank(0));
-    SevenSegmentDigit b2sd7(.bch(BCH7), .segment(HEX7), .blank(0));
+    SevenSegmentDigit b2sd0(.bch(BCH0), .segment(HEX0), .blank(1'b0));
+    SevenSegmentDigit b2sd1(.bch(BCH1), .segment(HEX1), .blank(1'b0));
+    SevenSegmentDigit b2sd2(.bch(BCH2), .segment(HEX2), .blank(1'b0));
+    SevenSegmentDigit b2sd3(.bch(BCH3), .segment(HEX3), .blank(1'b0));
+    SevenSegmentDigit b2sd4(.bch(BCH4), .segment(HEX4), .blank(1'b0));
+    SevenSegmentDigit b2sd5(.bch(BCH5), .segment(HEX5), .blank(1'b0));
+    SevenSegmentDigit b2sd6(.bch(BCH6), .segment(HEX6), .blank(1'b0));
+    SevenSegmentDigit b2sd7(.bch(BCH7), .segment(HEX7), .blank(1'b0));
 
 endmodule: SevenSegmentControl
