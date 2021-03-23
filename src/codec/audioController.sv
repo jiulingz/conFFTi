@@ -3,7 +3,7 @@
 module audioController (
 	logic input         clk, reset, SW0,
 	logic inout         SDIN,
-	logic input  [ 7:0] mixer_output, // where data is coming in, 8-bit data for now, could be adjusted
+	logic input  [24:0] mixer_output,
 	logic output        SCLK,
   logic output        USB_clk, BCLK,
 	logic output        DAC_LR_CLK,
@@ -46,15 +46,14 @@ module audioController (
   // Left and right channel DATA assembly
   //============================================
 
-  logic [3:0] bitcounter;
+  logic [4:0] bitcounter;
 
-  // TODO: figure out if this is right
   always_ff @(posedge clk)
     begin
       bitcounter <= bitcounter + 1;
-      if (bitcounter == 5) ROM_out_BUF[15:8] <= mixer_output;
-      if (bitcounter == 12) ROM_out_BUF[7:0] <= mixer_output;
-      if (bitcounter == 14) bitcounter <= 0;
+      if (bitcounter == 5) ROM_out_BUF[47:24] <= mixer_output;
+      if (bitcounter == 28) ROM_out_BUF[23:0] <= mixer_output;
+      if (bitcounter == 30) bitcounter <= 0;
     end
 
   always_ff @(posedge DAC_LR_CLK)
@@ -91,7 +90,6 @@ module audioController (
   // generate 6 configuration pulses
   //============================================
 
-  // TODO: draw FSM
   always_ff @(posedge clk)
     begin
     if (!reset) 
@@ -120,7 +118,6 @@ module audioController (
   //============================================
   // this counter is used to switch between registers
   //============================================
-  // TODO: understand
   always_ff @(posedge SCLK)
     begin
       case (counter) //MUX_input[15:9] register address, MUX_input[8:0] register data
