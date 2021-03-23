@@ -1,13 +1,13 @@
 // reference: https://github.com/AlexSunNik/ECE385-Final-Project/blob/master/audioController.sv
 
 module audioController (
-	logic input         clk, reset, SW0,
-	logic inout         SDIN,
-	logic input  [24:0] mixer_output,
-	logic output        SCLK,
-  logic output        USB_clk, BCLK,
-	logic output        DAC_LR_CLK,
-	logic output        DAC_DATA
+	input   logic        clk, reset, SW0,
+	inout   logic        SDIN,
+	input   logic [24:0] mixer_output,
+	output  logic        SCLK,
+  output  logic        USB_clk, BCLK,
+	output  logic        DAC_LR_CLK,
+	output  logic        DAC_DATA
 );
 
   logic         [ 3:0] counter; //selecting register address and its corresponding data
@@ -92,7 +92,7 @@ module audioController (
 
   always_ff @(posedge clk)
     begin
-    if (!reset) 
+    if (reset) 
       begin
         counting_state <= 0;
         read_enable <= 0;

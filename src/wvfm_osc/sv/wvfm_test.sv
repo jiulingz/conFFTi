@@ -2,7 +2,7 @@
 
 
 module wvfm_test();
-    logic        clk, reset, en;
+    logic        clk, reset;
 	 reg   [23:0] out;
 	 
 	 oscillator DUT(.wave_sel(2'b00), .freq(7'd10), .*);
@@ -15,7 +15,6 @@ module wvfm_test();
 	 initial begin
 	     $monitor($time,, "out=%b", out);
 		  reset <= 1'b1;
-		  en <= 1'b1;
 		  @(posedge clk);
 		  reset <= 1'b0;
     end

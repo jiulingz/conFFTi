@@ -21,7 +21,7 @@ endmodule: sine
 // wave_sel: 2'b00-sine, 2'b01-sqr, 2'b10-saw, 2'b11-tri
 module oscillator
    #( parameter pw = 8, ow = 24 )
-	 ( input  wire logic 		clk, reset, en,
+	 ( input  wire logic 		clk, reset,
 	   input  wire logic [1:0] wave_sel,
 	   input  wire logic [6:0] freq,
 	   output reg   [(ow-1):0] out );
