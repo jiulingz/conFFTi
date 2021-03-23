@@ -56,3 +56,20 @@ module Mux4to1
 	 end
 	 
 endmodule: Mux4to1
+
+module clock44 (
+  logic input  CLOCK_50,
+  logic output CLOCK_44,
+);
+
+  logic [10:0] counter;
+  always_ff @(posedge CLOCK_50) begin
+    counter <= counter + 1;
+    if (counter == 11'd1133) begin
+      counter <= 0;
+      CLOCK_44 <= 1;
+    end
+    else CLOCK_44 <= 0;
+  end
+  
+endmodule : clock44
