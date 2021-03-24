@@ -4,6 +4,8 @@
 !scripts/*
 !src/
 !src/*
+!src/wvfm_osc/lut
+!src/wvfm_osc/sv
 
 # Allow for Verilog and System Verilog files
 !*.sv
@@ -18,3 +20,7 @@
 
 # Allow for readme files
 !/README.md
+
+# Allow for .cpp and .hex files
+!*.cpp
+!*.hex
