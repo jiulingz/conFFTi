@@ -6,7 +6,6 @@
  * and outputs the MIDI byte when ready
  * 
  */
-`include "internal_defines.vh"
 
 `default_nettype none
 
@@ -17,6 +16,10 @@ module deserializer(
     output logic        ready,
     output logic [7 :0] MIDIbyte
 );
+
+    localparameter BAUD_RATE = 31250;
+    localparameter CLOCK_RATE = 50000000;
+    localparameter SAMPLE_RATE = 1600;
 
     // counter bound at different FSM states
     localparam STOP_cycle_count = SAMPLE_RATE / 16;
