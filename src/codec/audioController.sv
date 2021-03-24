@@ -1,9 +1,9 @@
 // reference: https://github.com/AlexSunNik/ECE385-Final-Project/blob/master/audioController.sv
 
 module audioController (
-	input   logic        clk, reset, SW0,
+	inout   logic        clk, reset, SW0,
 	inout   logic        SDIN,
-	input   logic [24:0] mixer_output,
+	input   logic [23:0] mixer_output,
 	output  logic        SCLK,
   output  logic        USB_clk, BCLK,
 	output  logic        DAC_LR_CLK,
@@ -15,9 +15,10 @@ module audioController (
   logic         [15:0] MUX_input;
   logic         [ 3:0] ROM_output_mux_counter;
   logic         [ 4:0] DAC_LR_CLK_counter;
-  logic         [15:0] ROM_out_BUF;
-  logic         [15:0] ROM_out;
+  logic         [49:0] ROM_out_BUF;
+  logic         [49:0] ROM_out;
   logic                finish_flag;
+  logic                fast_LR_CLK;
 
   assign DAC_DATA = (SW0) ? ROM_out[15 - ROM_output_mux_counter] : 0;
 
@@ -96,9 +97,11 @@ module audioController (
       begin
         counting_state <= 0;
         read_enable <= 0;
+        clear_clk <= 1;
       end
     else
       begin
+        clear_clk <= 0;
         case (counting_state)
         0:
           begin

@@ -1,8 +1,11 @@
 module I2C_Protocol(
 	input clk,reset,ignition,
 	input [15:0] MUX_input,	
+`ifdef SIMULATION_CONFFTI
+  output SDIN,
+`else begin
 	inout SDIN,
-	output reg finish_flag,
+`endif	output reg finish_flag,
 	output reg [2:0] ACK,
 //	output reg [15:0] data_check,
 	output reg SCLK
