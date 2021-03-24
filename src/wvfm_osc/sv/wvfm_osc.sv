@@ -2,8 +2,8 @@
 
 module sine
    #( parameter pw = 8, ow = 24	)
-	 ( input  wire logic            clk,
-	   input  wire logic [7:0] phase,
+	 ( input  logic            clk,
+	   input  logic [7:0] phase,
 	   output logic [(ow-1):0] out );
 	 
 	 reg [(ow-1):0] lut [0:((1<<pw)-1)];
@@ -21,9 +21,9 @@ endmodule: sine
 // wave_sel: 2'b00-sine, 2'b01-sqr, 2'b10-saw, 2'b11-tri
 module oscillator
    #( parameter pw = 8, ow = 24 )
-	 ( input  wire logic 		clk, reset, en,
-	   input  wire logic [1:0] wave_sel,
-	   input  wire logic [6:0] freq,
+	 ( input  logic 		clk, reset, en,
+	   input  logic [1:0] wave_sel,
+	   input  logic [6:0] freq,
 	   output reg   [(ow-1):0] out );
 	
 	 logic            incr_phase;
@@ -32,7 +32,7 @@ module oscillator
 	 logic [20:0]     incr_interval, count;
 	 reg   [20:0] lut [0:87];
 	 
-	 initial phase = 0;
+	//  initial phase = 0;
 	 
 	 // TEMP: placeholders
 	 assign sqr_out = 23'b0;
@@ -46,7 +46,7 @@ module oscillator
 	 // assign incr_interval = 15;
 	 
 	 // Increments phase according to down_ticks
-	 Counter #21 c1(.D(21'b0), .Q(count), 
+	 Counter #21 c1(.D(21'b0), .Q(count),
 	                .up(1'd1), .clear(incr_phase), .load(reset), .*);
 	 MagComp #21 mag(.A(count), .B(incr_interval), .AgtB(incr_phase), .AeqB(), .AltB());
 	 Counter #8 c2(.D(8'b0), .Q(phase), .en(incr_phase), 
