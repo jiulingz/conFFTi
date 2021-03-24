@@ -2,8 +2,8 @@
 
 module Counter
   #(parameter WIDTH=8)
-  (input logic [WIDTH-1:0] D,
-   input logic up, clk, en, clear, load,
+  (input  wire logic [WIDTH-1:0] D,
+   input  wire logic up, clk, en, clear, load,
    output logic [WIDTH-1:0] Q);
 
   always_ff @(posedge clk)
@@ -23,7 +23,7 @@ endmodule: Counter
 
 module MagComp
   #(parameter   WIDTH = 8)
-  (input  logic [WIDTH-1:0] A, B,
+  (input  wire logic [WIDTH-1:0] A, B,
    output logic             AltB, AeqB, AgtB);
 
   assign AeqB = (A == B);
@@ -34,8 +34,8 @@ endmodule: MagComp
 
 module Mux4to1
    #( parameter WIDTH = 24 )
-	 ( input  logic [1:0] sel,
-	   input  logic [(WIDTH-1):0] sin_out, sqr_out, saw_out, tri_out,
+	 ( input  wire logic [1:0] sel,
+	   input  wire logic [(WIDTH-1):0] sin_out, sqr_out, saw_out, tri_out,
 	   output logic [(WIDTH-1):0] out );
     
 	 always_comb begin
@@ -115,8 +115,8 @@ endmodule: BarrelShiftRegister
 
 module clockDivider #(
     parameter WIDTH=8
-)  (input  logic             clock, clear,
-    input  logic [WIDTH-1:0] bound,
+)  (input  wire logic        clock, clear,
+    input  wire logic [WIDTH-1:0] bound,
     output logic             finish);
 
     reg [WIDTH-1:0] count;
@@ -140,20 +140,20 @@ module clockDivider #(
 endmodule: clockDivider
 
 module Clock44 (
-  input  logic clear,
-  input  logic clock50,
+  input  wire logic clear,
+  input  wire logic clock50,
   output logic clock44
 );
 
   clockDivider #(.WIDTH(12)) Counter44 (
     .clock(clock50), .clear(clear), .bound(12'd566), .finish(clock44)
   );
-  
+
 endmodule : Clock44
 
 module Clock400 (
-  input  logic clear,
-  input  logic clock50,
+  input  wire logic clear,
+  input  wire logic clock50,
   output logic clock400
 );
 
