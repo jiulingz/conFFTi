@@ -1,6 +1,6 @@
 `default_nettype none
 
-//`include "internal_defines.vh"
+`include "internal_defines.vh"
 
 module wvfm_test();
     logic      clk, reset, en;
@@ -15,9 +15,8 @@ module wvfm_test();
 		dsp_to_osc.note_en = OFF;
     end
 	 
-	 assign samp = 1'b0;
-	 global_clock gc(.*);
-         Clock44 clock44(.clear(1'b0), .clock50(clk), .clock44(samp_clk));
+	 assign samp_clk = 1'b0;
+    Clock44 clock44(.clear(1'b0), .clock50(clk), .clock44(samp_clk));
 	 oscillator DUT(.*);
 	 
 	 initial begin
