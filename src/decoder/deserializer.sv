@@ -17,9 +17,9 @@ module deserializer(
     output logic [7 :0] MIDIbyte
 );
 
-    localparameter BAUD_RATE = 31250;
-    localparameter CLOCK_RATE = 50000000;
-    localparameter SAMPLE_RATE = 1600;
+    localparam BAUD_RATE = 31250;
+    localparam CLOCK_RATE = 50000000;
+    localparam SAMPLE_RATE = 1600;
 
     // counter bound at different FSM states
     localparam STOP_cycle_count = SAMPLE_RATE / 16;
