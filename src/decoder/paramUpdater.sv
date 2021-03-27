@@ -3,7 +3,7 @@
 `include "internal_defines.vh"
 
 // TODO(chkpt 3): add arpeggiator mode, rate and rhythm info parsing
-module paramUpdate (
+module paramUpdater (
   input  logic             clk,
   input  logic             param_change_ready,
   input  logic       [6:0] note,
@@ -70,4 +70,4 @@ module paramUpdate (
     end
   end
 
-endmodule: paramUpdate
+endmodule: paramUpdater

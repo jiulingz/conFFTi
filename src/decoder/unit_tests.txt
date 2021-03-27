@@ -1,0 +1,15 @@
+deserializer unit test (simulation) -- PASSED
+  - deserializer_test.sv
+  - deserializer.sv
+  - sender.sv
+  - deserailizer_test_data.vm
+
+deserializer visualizer test (synthesis) -- NOT PASSED
+  - visualizer
+  - sender.sv
+  - deserializer.sv
+
+decoder unit test (simulation) -- IN PROG
+  - decoder.sv
+  - decoder_test.sv
+  - decoder_test_data.vm
