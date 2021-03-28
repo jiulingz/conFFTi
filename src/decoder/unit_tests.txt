@@ -9,7 +9,7 @@ deserializer visualizer test (synthesis) -- NOT PASSED
   - sender.sv
   - deserializer.sv
 
-decoder unit test (simulation) -- IN PROG
+decoder unit test (simulation) -- PASSED
   - decoder.sv
   - decoder_test.sv
   - decoder_test_data.vm
