@@ -9,12 +9,10 @@ module paramUpdater (
   input  logic       [6:0] note,
   input  logic       [6:0] velocity,
   output logic       [3:0] paramIdx, // between 0-8, indicates which param is updated
-  output wave_sel_t        wave_sel, // paramIdx: 0
-  output pp_arp_sel_t      pipeline_mode, // paramIdx: 1
-  output logic       [6:0] attack, // paramIdx: 2
-  output logic       [6:0] delay, // paramIdx: 3
-  output logic       [6:0] sustain, // paramIdx: 4
-  output logic       [6:0] release, // paramIdx: 5
+  output logic       [6:0] a, // paramIdx: 2
+  output logic       [6:0] d, // paramIdx: 3
+  output logic       [6:0] s, // paramIdx: 4
+  output logic       [6:0] r, // paramIdx: 5
   output logic       [6:0] volume, // paramIdx: 6
   output logic       [6:0] unison_detune, // paramIdx: 7
   output logic       [6:0] tempo // paramIdx: 8
@@ -25,30 +23,28 @@ module paramUpdater (
       case (note)
         7'd104: begin
           if (velocity != 7'd0) begin
-            wave_sel <= wave_sel + 1;
             paramIdx <= 4'd0;
           end
         end
         7'd115: begin
           if (velocity != 7'd0) begin
-            pipeline_mode <= ~pipeline_mode;
             paramIdx <= 4'd1;
           end
         end
         7'd24: begin
-          attack <= note;
+          a <= note;
           paramIdx <= 4'd2;
         end
         7'd25: begin
-          decay <= note;
+          d <= note;
           paramIdx <= 4'd3;
         end
         7'd26: begin
-          sustain <= note;
+          s <= note;
           paramIdx <= 4'd4;
         end
         7'd27: begin
-          sustain <= note;
+          r <= note;
           paramIdx <= 4'd5;
         end
         7'd28: begin
@@ -68,6 +64,7 @@ module paramUpdater (
         end
       endcase
     end
+    else paramIdx <= 4'dx;
   end
 
 endmodule: paramUpdater

@@ -13,3 +13,4 @@ decoder unit test (simulation) -- IN PROG
   - decoder.sv
   - decoder_test.sv
   - decoder_test_data.vm
+  vcs -sverilog -gui -R decoder/decoder.sv decoder/paramUpdater.sv decoder/decoder_test.sv internal_defines.vh

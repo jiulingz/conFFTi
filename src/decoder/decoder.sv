@@ -12,7 +12,7 @@ module decoder(
   output note_en_t   note_event
 );
 
-  enum logic [3:0] {
+  enum logic [2:0] {
     IDLE          = 3'b000,
     GOT_STATUS    = 3'b001,
     DATA_MSG_I    = 3'b010,
@@ -23,47 +23,57 @@ module decoder(
 
   logic isStatus, isDataMsg, isParamChange, isNoteOn, isNoteOff;
 
-  always_ff @(posedge clock, posedge reset)
+  assign isStatus = ready && (MIDIbyte[7] == 1'b1);
+  assign isDataMsg = ready && ~isStatus;
+
+  always_ff @(posedge clk, posedge reset)
     if (reset) begin
       c_state <= IDLE;
+      n_state <= IDLE;
     end
     else if (ready) begin
-      isStatus <= (MIDIbyte[7] == 1'b1);
-      isDataMsg <= (MIDIbyte >= 8'd0 && MIDIbyte < 8'd128);
       case (c_state)
-        IDLE: n_state <= isStatus ? GOT_STATUS : IDLE;
-        GOT_STATUS: begin
-          n_state <= isDataMsg ? DATA_MSG_I : IDLE;
+        IDLE: begin
+          n_state <= isStatus ? GOT_STATUS : IDLE;
           isParamChange <= (MIDIbyte[7:4] == 4'hb);
           isNoteOn <= (MIDIbyte[7:4] == 4'h9);
           isNoteOff <= (MIDIbyte[7:4] == 4'h8);
         end
-        DATA_MSG_I: begin
+        GOT_STATUS: begin
           note <= MIDIbyte[6:0];
-          if (isParamChange == 1'b1) n_state <= PARAM_CHANGE;
-          else if (isNoteOn == 1'b1) n_state <= NOTE_ON;
-          else if (isNoteOff) == 1'b1) n_state <= NOTE_OFF;
+          n_state <= isDataMsg ? DATA_MSG_I : IDLE;
+        end
+        DATA_MSG_I: begin
+          velocity <= MIDIbyte[6:0];
+          if (isParamChange) n_state <= PARAM_CHANGE;
+          else if (isNoteOn) n_state <= NOTE_ON;
+          else if (isNoteOff) n_state <= NOTE_OFF;
           else n_state <= IDLE;
         end
-        default: begin
+      endcase
+    end
+    else begin
+      case (c_state)
+        PARAM_CHANGE: begin
           n_state <= IDLE;
-          velocity <= MIDIbyte[6:0];
+          param_change_ready <= 1;
+        end
+        NOTE_ON: begin
+          n_state <= IDLE;
+          note_event <= ON;
+          note_event_ready <= 1;
+        end
+        NOTE_OFF: begin
+          n_state <= IDLE;
+          note_event <= OFF;
+          note_event_ready <= 1;
+        end
+        default: begin
+          note_event_ready <= 0;
+          param_change_ready <= 0;
         end
       endcase
+      if (c_state != n_state) c_state <= n_state;
     end
-    if (c_state != n_state) begin
-      case (n_state)
-        IDLE: begin
-          note_event_ready <= 1'b0;
-          param_change_ready <= 1'b0;
-          note <= 7'd0;
-          velocity <= 7'd0;
-        end
-        PARAM_CHANGE: param_change_ready <= 1'b1;
-        NOTE_ON: note_event_ready <= 1'b1;
-        NOTE_OFF: note_event_ready <= 1'b1;
-      endcase
-    end
-    c_state <= n_state;
 
 endmodule: decoder
