@@ -1,0 +1,16 @@
+deserializer unit test (simulation) -- PASSED
+  - deserializer_test.sv
+  - deserializer.sv
+  - sender.sv
+  - deserailizer_test_data.vm
+
+deserializer visualizer test (synthesis) -- NOT PASSED
+  - visualizer
+  - sender.sv
+  - deserializer.sv
+
+decoder unit test (simulation) -- PASSED
+  - decoder.sv
+  - decoder_test.sv
+  - decoder_test_data.vm
+  vcs -sverilog -gui -R decoder/decoder.sv decoder/paramUpdater.sv decoder/decoder_test.sv internal_defines.vh
