@@ -1,4 +1,4 @@
-`default_nettype none
+// `default_nettype none
 
 `include "../internal_defines.vh"
 
@@ -10,7 +10,7 @@ module PolyphonyControl
     input  wire logic                      input_en,
     input  wire logic                      clk,
     input  wire logic                      reset,
-    input  wire note_en_t                  note_in_en,
+    input  note_en_t                  note_in_en,
     input  wire logic     [      6:0]      note_in,
     input  wire logic     [      6:0]      velocity_in,
     output logic          [COUNT-1:0]      notes_out_en,

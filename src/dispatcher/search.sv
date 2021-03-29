@@ -11,7 +11,7 @@ module search #(
 );
   always_comb begin
     index = 0;
-    while (index < ELEMENT_COUNT && needle != heystack[index]) begin
+    while (index < ELEMENT_COUNT && needle != heystack[index[$clog2(ELEMENT_COUNT)-1:0]]) begin
       index++;
     end
   end
