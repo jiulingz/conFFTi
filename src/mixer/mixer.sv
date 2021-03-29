@@ -4,6 +4,9 @@ module mixer (
 );
 
   // TODO (ckpt2 integration): add volume control
-  mixer_output = (pipe1 >> 2) + (pipe2 >> 2) + (pipe3 >> 2) + (pipe4 >> 2);
+  logic [25:0] temp_output;
+
+  assign temp_output = pipe1 + pipe2 + pipe3 + pipe4;
+  assign mixer_output = temp_output[25:2];
 
 endmodule: mixer
