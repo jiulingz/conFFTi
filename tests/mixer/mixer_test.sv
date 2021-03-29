@@ -5,7 +5,7 @@ module mixer_test ();
   mixer Mixer (.*);
 
   initial begin
-    $monitor($time, " pipe1=%b, pipe2=%b, pipe3=%b, pipe4=%b, mixer_output=%b");
+    $monitor($time, " pipe1=%b, pipe2=%b, pipe3=%b, pipe4=%b, mixer_output=%b", pipe1, pipe2, pipe3, pipe4, mixer_output);
 
     #10 pipe1 = 24'h3FFFFF;
     pipe2 = 24'h3FFFFF;
