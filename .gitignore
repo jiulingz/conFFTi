@@ -1,11 +1,18 @@
 # Exclude all files, then include in only the required ones, or by hand
 *
 !scripts/
-!scripts/*
+!scripts/*/
 !src/
-!src/*
+!src/*/
+
 !src/wvfm_osc/lut
 !src/wvfm_osc/sv
+
+# Allow for gitignore files
+!.gitignore
+
+# Allow for readme files
+!/README.md
 
 # Allow for Verilog and System Verilog files
 !*.sv
@@ -15,12 +22,6 @@
 # Allow for Matlab files
 !*.m
 
-# Allow for gitignore files
-!.gitignore
-
-# Allow for readme files
-!/README.md
-
-# Allow for .cpp and .hex files
+# Allow for C++ and hex files
 !*.cpp
 !*.hex
