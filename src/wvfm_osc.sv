@@ -131,7 +131,8 @@ module oscillator
      Counter #11 c(.Q(count), .D(11'd1133), .up(1'd0), .en(1'd1),
                    .clear(1'd0), .load(reset | load_count), .clk(clk));
      MagComp #11 mag2(.A(count), .B(1'd0), .AeqB(load_count), .AltB(), .AgtB());
-     Mux4to1 #24 mtx(.sel(wave_sel), .out(wave_out), .*);
+     Mux4to1 #24 mtx(.sel(wave_sel), .out(wave_out), .out1(sin_out), .out2(sqr_out),
+	                  .out3(saw_out), .out4(trg_out));
      MagComp #21 mag(.A(phase), .B(max_phase), .AgtB(clr_phase), .AeqB(), .AltB());
 
      /* ff logic to detect rising edge of note_en input */
