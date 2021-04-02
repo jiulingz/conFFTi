@@ -11,7 +11,6 @@ module Top_dac(
   initial begin
 	 dsp_to_osc.note = 7'd31;
     dsp_to_osc.velocity = 7'd10;
-    dsp_to_osc.wave_sel = SIN;
     dsp_to_osc.note_en = ON;
   end
   
@@ -35,7 +34,7 @@ module Top_dac(
   // instantiate oscillator
   oscillator Osc (
     .clk(CLOCK_50),
-	 .wave_sel(2'b00),
+	 .wave_sel(SIN),
     .reset(SW[0]),
     .en(SW[1]),
     .dsp_to_osc(dsp_to_osc),

@@ -70,7 +70,7 @@ module sawtooth
   #( parameter pw = 20, ow = 24 )
    ( input wire logic        clk, reset,
      input wire logic [pw:0] phase,
-     output logic [(ow-1):0] trg_out );
+     output logic [(ow-1):0] tri_out );
 
 	   logic       neg, phase1;
 	   logic [4:0] slope;
@@ -80,9 +80,9 @@ module sawtooth
 
      always @(posedge clk) begin
        if (neg)
-         trg_out <= (21'd500000 - phase) * phase;
+         tri_out <= (21'd500000 - phase) * phase;
        else
-         trg_out <= (1 << (ow-1)) | ((phase - 21'd500000) * phase);
+         tri_out <= (1 << (ow-1)) | ((phase - 21'd500000) * phase);
      end
 
 endmodule: sawtooth
@@ -97,7 +97,7 @@ module oscillator
 
      logic              clr_phase, load_count, note_en_ff, note_en_rise_edge;
      logic [10:0]       count;
-     logic [(ow-1):0]   sin_out, sqr_out, saw_out, trg_out;
+     logic [(ow-1):0]   sin_out, sqr_out, saw_out, tri_out;
 	   /* +7 to accomodate for velocity scaling */
      logic [(ow-1+7):0] wave_out;
      logic [20:0]       interval, phase, max_phase;
@@ -134,7 +134,7 @@ module oscillator
      end
 
      always @(posedge clk) begin
-       if (reset or note_en_rise_edge) begin
+       if (reset || note_en_rise_edge) begin
          out <= 0;
          phase <= 0;
          /* when reset signal is on, or when note is first enabled */
