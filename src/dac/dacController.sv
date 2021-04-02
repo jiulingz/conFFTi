@@ -1,9 +1,10 @@
 module DacController (
+  input  logic clk,
   input  logic reset,
-  input  logic mixer_output,
+  input  logic [15:0] mixer_output,
   output logic i2sBitClock,
   output logic i2sSoundData,
-  output logic i2sLeftRightSelect,
+  output logic i2sLeftRightSelect
 );
   
   // 50,000,000 / 44,100 / 16 / 2 / 2 (DE0 Nano clock / sample rate / bits per sample / channels / edges);
@@ -12,13 +13,12 @@ module DacController (
   reg [11:0] i2sCount;
   reg [7:0] bitCount;
 
-  always @(posedge CLOCK_50)
+  always @(posedge clk)
   if (reset) begin
     i2sCount <= 0;
     bitCount <= 15;
-    noteSampleCount <= 0;
   end
-  begin
+  else begin
     i2sCount <= i2sCount + 1'b1;
     if (i2sCount == i2sTicks) begin
       i2sCount <= 1'b0;
