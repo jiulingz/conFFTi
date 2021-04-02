@@ -34,8 +34,7 @@ void sintable(const char* filename, int pw, int ow) {
 
 void freqtable() {
 	FILE* divtable_file = fopen("divtable.hex", "w");
-	FILE* freqtable_file = fopen("freqtable.hex", "w");
-	if (divtable_file == NULL || freqtable_file == NULL) {
+	if (divtable_file == NULL) {
 		fprintf(stderr, "Cannot open file for writing data.");
 		return;
 	}
@@ -55,17 +54,14 @@ void freqtable() {
 		3951.1, 4186};
 	for (int i = 0; i < ending_freq - starting_freq + 1; i++) {
 		fprintf(divtable_file, "%s@%08x ", (i != 0) ? "\n" : "", i);
-		fprintf(freqtable_file, "%s@%08x ", (i != 0) ? "\n" : "", i);
 		long val = 1000000 * freqs[i] / samp_freq;
 		fprintf(divtable_file, "%lx\n", val);
-		fprintf(freqtable_file, "%lx\n", long(freqs[i]));
 	}
 	fclose(divtable_file);
-	fclose(freqtable_file);
 }
 
 int main(int argc, char** argv) {
-	sintable("sintable.hex", 8, 24);
+	sintable("sintable.hex", 20, 24);
 	freqtable();
 	return 0;
 }

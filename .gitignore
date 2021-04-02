@@ -4,7 +4,7 @@
 !scripts/*
 !src/
 !src/*
-!src/wvfm_osc/lut
+!src/wvfm_osc/lut/maketable.cpp
 !src/wvfm_osc/sv
 
 # Allow for Verilog and System Verilog files
