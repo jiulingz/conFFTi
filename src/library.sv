@@ -35,22 +35,22 @@ endmodule: MagComp
 module Mux4to1
    #( parameter WIDTH = 24 )
 	 ( input  wire logic [1:0] sel,
-	   input  wire logic [(WIDTH-1):0] sin_out, sqr_out, saw_out, tri_out,
+	   input  wire logic [(WIDTH-1):0] out1, out2, out3, out4,
 	   output logic [(WIDTH-1):0] out );
     
 	 always_comb begin
 	     case (sel)
 		      2'b00: begin
-						 out = sin_out;
+						 out = out1;
 						 end
 				2'b01: begin
-				       out = sqr_out;
+				       out = out2;
 						 end
 				2'b10: begin
-				       out = saw_out;
+				       out = out3;
 						 end
 				2'b11: begin
-				       out = tri_out;
+				       out = out4;
 						 end
 			endcase
 	 end
