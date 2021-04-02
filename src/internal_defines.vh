@@ -16,7 +16,6 @@ typedef enum logic {
 typedef struct packed {
   logic [6:0] note;     // 21~108
   logic [6:0] velocity; // 0~127
-  wave_sel_t wave_sel;
   note_en_t note_en;
 } dsp_to_osc_t;
 

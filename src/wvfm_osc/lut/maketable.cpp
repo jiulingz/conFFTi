@@ -32,15 +32,16 @@ void sintable(const char* filename, int pw, int ow) {
 	fclose(table_file);
 }
 
-void freqtable(const char* filename) {
-	FILE* table_file = fopen(filename, "w");
-	if (table_file == NULL) {
-		fprintf(stderr, "Cannot open file: %s for writing data.", filename);
+void freqtable() {
+	FILE* divtable_file = fopen("divtable.hex", "w");
+	FILE* freqtable_file = fopen("freqtable.hex", "w");
+	if (divtable_file == NULL || freqtable_file == NULL) {
+		fprintf(stderr, "Cannot open file for writing data.");
 		return;
 	}
 	int starting_freq = 21;
 	int ending_freq = 108;
-	int fpga_clk = 50000000;
+	int samp_freq = 44100;
 	double freqs[88] = {27.5, 29.135, 30.868, 32.703, 34.648, 36.708, 38.891,
 		41.203, 43.654, 46.249, 48.999, 51.913, 55, 58.27, 61.735, 65.406,
 		69.296, 73.416, 77.782, 82.407, 87.307, 92.499, 97.999, 103.83,
@@ -53,15 +54,18 @@ void freqtable(const char* filename) {
 		2217.5, 2349.3, 2489, 2637, 2793, 2960, 3136, 3322.4, 3520, 3729.3,
 		3951.1, 4186};
 	for (int i = 0; i < ending_freq - starting_freq + 1; i++) {
-		fprintf(table_file, "%s@%08x ", (i != 0) ? "\n" : "", i);
-		long val = fpga_clk / freqs[i];
-		fprintf(table_file, "%lx\n", val);
+		fprintf(divtable_file, "%s@%08x ", (i != 0) ? "\n" : "", i);
+		fprintf(freqtable_file, "%s@%08x ", (i != 0) ? "\n" : "", i);
+		long val = 1000000 * freqs[i] / samp_freq;
+		fprintf(divtable_file, "%lx\n", val);
+		fprintf(freqtable_file, "%lx\n", long(freqs[i]));
 	}
-	fclose(table_file);
+	fclose(divtable_file);
+	fclose(freqtable_file);
 }
 
 int main(int argc, char** argv) {
 	sintable("sintable.hex", 8, 24);
-	freqtable("freqtable.hex");
+	freqtable();
 	return 0;
 }

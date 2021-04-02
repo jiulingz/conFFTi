@@ -15,12 +15,13 @@ module wvfm_test();
 		dsp_to_osc.note_en = OFF;
     end
 	 
+	 assign samp_clk = 1'b0;
+    Clock44 clock44(.clear(1'b0), .clock50(clk), .clock44(samp_clk));
 	 oscillator DUT(.*);
 	 
 	 initial begin
 	     clk = 1;
-		  forever #10000 clk = ~clk;
-		  /* simulate 50M clock rate */
+		  forever #5 clk = ~clk;
 	 end
 	 
 	 initial begin
@@ -31,7 +32,6 @@ module wvfm_test();
 		  @(posedge clk);
 		  reset <= 1'b0;
 		  dsp_to_osc.note_en <= OFF;
-		 
     end
 	 
 endmodule: wvfm_test
