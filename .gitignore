@@ -25,3 +25,8 @@
 # Allow for C++ and hex files
 !*.cpp
 !*.hex
+
+# Explicitly ignore project files
+*.qpf
+*.qsf
+*.qws
