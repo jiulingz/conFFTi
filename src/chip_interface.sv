@@ -1,6 +1,7 @@
 `default_nettype none
 
 `include "includes/config.vh"
+`include "includes/midi.vh"
 
 module ChipInterface (
     // CLOCK
@@ -28,7 +29,9 @@ module ChipInterface (
   logic                               clock_50_000_000;
   logic                               clock_16_934_400;
   logic                               reset_l;
-  logic                               midi_rx;
+  logic                               uart_rx;
+  logic [     CONFIG::BYTE_WIDTH-1:0] data_in;
+  logic                               data_in_ready;
   logic                               i2s_bit_clock;
   logic                               i2s_left_right_clock;
   logic                               i2s_data;
@@ -36,7 +39,7 @@ module ChipInterface (
 
   assign clock_50_000_000     = CLOCK_50;
   assign reset_l              = KEY[0];
-  assign midi_rx              = GPIO[6];
+  assign uart_rx              = GPIO[6];
   assign i2s_bit_clock        = GPIO[0];
   assign i2s_data             = GPIO[1];
   assign i2s_left_right_clock = GPIO[3];
@@ -48,11 +51,21 @@ module ChipInterface (
       .reset_source_reset()
   );
 
+  UARTDriver #(
+      .BAUD_RATE(MIDI::BAUD_RATE)
+  ) uart_driver (
+      .clock_50_000_000,
+      .uart_rx,
+      .reset_l,
+      .data_in,
+      .data_in_ready
+  );
+
   conFFTi conffti (
       .clock_50_000_000,
       .clock_16_934_400,
       .reset_l,
-      .midi_rx,
+      .data_in,
       .audio_out
   );
 

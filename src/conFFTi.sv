@@ -6,7 +6,7 @@ module conFFTi (
     input  logic                               clock_50_000_000,
     input  logic                               clock_16_934_400,
     input  logic                               reset_l,
-    input  logic                               midi_rx,
+    input  logic [     CONFIG::BYTE_WIDTH-1:0] data_in,
     output logic [CONFIG::AUDIO_BIT_WIDTH-1:0] audio_out
 );
 
