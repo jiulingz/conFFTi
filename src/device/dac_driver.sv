@@ -51,6 +51,12 @@ module DACDriver
       end
     end
 
+  // Sample audio_out
+  logic [AUDIO_BIT_WIDTH-1:0] audio_sample;
+  always_ff @(posedge i2s_left_right_clock or negedge reset_l) begin
+    audio_sample <= audio_out;
+  end
+
   // Generate i2s_data
   logic [$clog2(AUDIO_BIT_WIDTH)-1:0] data_count;
   always_ff @(negedge i2s_bit_clock, negedge reset_l)
@@ -58,7 +64,7 @@ module DACDriver
       i2s_data   <= '0;
       data_count <= AUDIO_BIT_WIDTH - 1;
     end else begin
-      i2s_data <= audio_out[data_count];
+      i2s_data <= audio_sample[data_count];
       if (data_count == 0) data_count <= AUDIO_BIT_WIDTH - 1;
     end
 
