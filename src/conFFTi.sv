@@ -1,14 +1,35 @@
 `default_nettype none
 
 `include "includes/config.vh"
+`include "../includes/midi.vh"
 
 module conFFTi (
     input  logic                               clock_50_000_000,
     input  logic                               clock_16_934_400,
     input  logic                               reset_l,
     input  logic [     CONFIG::BYTE_WIDTH-1:0] data_in,
+    input  logic                               data_in_ready,
     output logic [CONFIG::AUDIO_BIT_WIDTH-1:0] audio_out
 );
+
+  MIDI::message_t message;
+  logic           message_ready;
+  MIDIDecoder midi_decoder (
+      .clock_50_000_000,
+      .reset_l,
+      .data_in,
+      .data_in_ready,
+      .message,
+      .message_ready
+  );
+
+  PARAMETER::parameter_t parameters;
+  ParameterControl parameter_control (
+      .clock_50_000_000,
+      .reset_l,
+      .message,
+      .parameters
+  );
 
   // TODO: change this placeholder
   import CONFIG::AUDIO_SAMPLE_RATE;

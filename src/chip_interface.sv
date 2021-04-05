@@ -66,6 +66,7 @@ module ChipInterface (
       .clock_16_934_400,
       .reset_l,
       .data_in,
+      .data_in_ready,
       .audio_out
   );
 

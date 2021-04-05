@@ -22,16 +22,6 @@ package MIDI;
     PROGRAM_CHANGE = 4'hC
   } message_type_t;
 
-  import CONFIG::BYTE_WIDTH;
-  typedef struct packed {
-    struct packed {
-      message_type_t message;
-      logic [CHANNEL_WIDTH-1:0] channel;
-    } status_byte;
-    logic [BYTE_WIDTH-1:0] data_byte1;
-    logic [BYTE_WIDTH-1:0] data_byte2;
-  } message_raw_t;
-
   typedef logic [DATA_WIDTH-1:0] note_t;
   typedef enum logic [DATA_WIDTH-1:0] {
     TEMPO   = 7'd21,
