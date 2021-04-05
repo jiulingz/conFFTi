@@ -1,4 +1,4 @@
-// `default_nettype none
+`default_nettype none
 
 // tap reference: https://www.xilinx.com/support/documentation/application_notes/xapp052.pdf, Table 3
 module LFSR #(

@@ -1,20 +1,24 @@
 `default_nettype none
 
-module search #(
+module Search #(
     parameter ELEMENT_WIDTH = 0,
-    parameter ELEMENT_COUNT = 4
+    parameter ELEMENT_COUNT = 0
 ) (
-    input  wire logic [          ELEMENT_WIDTH-1:0]                    needle,
-    input  wire logic [          ELEMENT_COUNT-1:0][ELEMENT_WIDTH-1:0] heystack,
-    output logic                                                       contains,
-    output logic      [$clog2(ELEMENT_COUNT+1)-1:0]                    index
+    input  logic [        ELEMENT_WIDTH-1:0] needle,
+    input  logic [        ELEMENT_WIDTH-1:0] heystack[ELEMENT_COUNT-1:0],
+    output logic                             contains,
+    output logic [$clog2(ELEMENT_COUNT)-1:0] index
 );
+
+  localparam INDEX_WIDTH = $clog2(ELEMENT_COUNT);
+
+  logic [$clog2(ELEMENT_COUNT+1)-1:0] i;
   always_comb begin
-    index = 0;
-    while (index < ELEMENT_COUNT && needle != heystack[index[$clog2(ELEMENT_COUNT)-1:0]]) begin
-      index++;
-    end
+    i = 0;
+    while (i < ELEMENT_COUNT && needle != heystack[i[0+:INDEX_WIDTH]]) i++;
   end
-  assign contains = index < ELEMENT_COUNT;
+
+  assign contains = i < ELEMENT_COUNT;
+  assign index    = i[0+:INDEX_WIDTH];
 
 endmodule

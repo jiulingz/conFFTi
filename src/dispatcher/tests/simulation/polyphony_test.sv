@@ -1,462 +1,508 @@
 `default_nettype none
 
-`include "../internal_defines.vh"
+`include "../../../includes/midi.vh"
 
-module clock (
-    output logic clk
-);
-  initial begin
-    clk = 1'b0;
-    forever #1 clk = ~clk;
-  end
-endmodule
+module PolyphonyTest1 ();
 
-module pc_test1 ();
-  import conFFTi::*;
+  import MIDI::*;
 
-  logic                input_en;
-  logic                clk;
-  logic                reset;
-  note_en_t            note_in_en;
-  logic     [6:0]      note_in;
-  logic     [6:0]      velocity_in;
-  logic     [3:0]      notes_out_en;
-  logic     [3:0][6:0] notes_out;
-  logic     [3:0][6:0] velocities_out;
+  logic                     clock;
+  logic                     reset_l;
+  note_change_t             note;
+  logic                     note_ready;
+  note_change_t [      3:0] pipeline_notes;
+  logic           [3:0]     pipeline_notes_ready;
 
-  clock c (.clk);
-  PolyphonyControl dut (
-      .input_en,
-      .clk,
-      .reset,
-      .note_in_en,
-      .note_in,
-      .velocity_in,
-      .notes_out_en,
-      .notes_out,
-      .velocities_out
+  Polyphony dut (
+      .clock_50_000_000(clock),
+      .reset_l,
+      .note,
+      .note_ready,
+      .pipeline_notes,
+      .pipeline_notes_ready
   );
 
+  // clock
   initial begin
-    $display(
-        "\tinput_en | note_in_en | note_in | velocity_in | notes_out_en |       notes_out |  velocities_out");
-    $monitor(
-        "\t       %b |          %b |     %03d |         %03d |   %b  %b  %b  %b | %03d %03d %03d %03d | %03d %03d %03d %03d",
-        input_en, note_in_en, note_in, velocity_in, notes_out_en[3], notes_out_en[2],
-        notes_out_en[1], notes_out_en[0], notes_out[3], notes_out[2], notes_out[1], notes_out[0],
-        velocities_out[3], velocities_out[2], velocities_out[1], velocities_out[0]);
-    input_en = 0;
-    reset    = 1;
-    #1.5 reset = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 10;
-    velocity_in = 20;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 10;
-    velocity_in = 125;
-    #10 input_en = 0;
-
-    #10 $finish;
+    clock = 1'b0;
+    forever #1 clock = ~clock;
   end
-endmodule
 
-module pc_test2 ();
-  import conFFTi::*;
+  // initialization
+  initial begin
+    reset_l <= 1'b0;
+    @(posedge clock);
+    reset_l <= 1'b1;
+  end
 
-  logic                input_en;
-  logic                clk;
-  logic                reset;
-  note_en_t            note_in_en;
-  logic     [6:0]      note_in;
-  logic     [6:0]      velocity_in;
-  logic     [3:0]      notes_out_en;
-  logic     [3:0][6:0] notes_out;
-  logic     [3:0][6:0] velocities_out;
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("%p", pipeline_notes);
+    end
 
-  clock c (.clk);
-  PolyphonyControl dut (
-      .input_en,
-      .clk,
-      .reset,
-      .note_in_en,
-      .note_in,
-      .velocity_in,
-      .notes_out_en,
-      .notes_out,
-      .velocities_out
+  // trace
+  initial begin
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd10, 7'd20};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd10, 7'd123};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    $finish;
+  end
+
+endmodule : PolyphonyTest1
+
+module PolyphonyTest2 ();
+
+  import MIDI::*;
+
+  logic                     clock;
+  logic                     reset_l;
+  note_change_t             note;
+  logic                     note_ready;
+  note_change_t [      3:0] pipeline_notes;
+  logic           [3:0]     pipeline_notes_ready;
+
+  Polyphony dut (
+      .clock_50_000_000(clock),
+      .reset_l,
+      .note,
+      .note_ready,
+      .pipeline_notes,
+      .pipeline_notes_ready
   );
 
+  // clock
   initial begin
-    $display(
-        "\tinput_en | note_in_en | note_in | velocity_in | notes_out_en |       notes_out |  velocities_out");
-    $monitor(
-        "\t       %b |          %b |     %03d |         %03d |   %b  %b  %b  %b | %03d %03d %03d %03d | %03d %03d %03d %03d",
-        input_en, note_in_en, note_in, velocity_in, notes_out_en[3], notes_out_en[2],
-        notes_out_en[1], notes_out_en[0], notes_out[3], notes_out[2], notes_out[1], notes_out[0],
-        velocities_out[3], velocities_out[2], velocities_out[1], velocities_out[0]);
-    input_en = 0;
-    reset    = 1;
-    #1.5 reset = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 10;
-    velocity_in = 20;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 20;
-    velocity_in = 40;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 30;
-    velocity_in = 60;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 40;
-    velocity_in = 80;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 10;
-    velocity_in = 20;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 20;
-    velocity_in = 40;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 30;
-    velocity_in = 60;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 40;
-    velocity_in = 80;
-    #10 input_en = 0;
-
-    #10 $finish;
+    clock = 1'b0;
+    forever #1 clock = ~clock;
   end
-endmodule
 
-module pc_test3 ();
-  import conFFTi::*;
+  // initialization
+  initial begin
+    reset_l <= 1'b0;
+    @(posedge clock);
+    reset_l <= 1'b1;
+  end
 
-  logic                input_en;
-  logic                clk;
-  logic                reset;
-  note_en_t            note_in_en;
-  logic     [6:0]      note_in;
-  logic     [6:0]      velocity_in;
-  logic     [3:0]      notes_out_en;
-  logic     [3:0][6:0] notes_out;
-  logic     [3:0][6:0] velocities_out;
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("%p", pipeline_notes);
+    end
 
-  clock c (.clk);
-  PolyphonyControl dut (
-      .input_en,
-      .clk,
-      .reset,
-      .note_in_en,
-      .note_in,
-      .velocity_in,
-      .notes_out_en,
-      .notes_out,
-      .velocities_out
+  // trace
+  initial begin
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd10, 7'd20};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd20, 7'd40};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd30, 7'd60};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd40, 7'd80};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd10, 7'd20};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd20, 7'd40};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd30, 7'd60};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd40, 7'd80};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    $finish;
+  end
+
+endmodule : PolyphonyTest2
+
+module PolyphonyTest3 ();
+
+  import MIDI::*;
+
+  logic                     clock;
+  logic                     reset_l;
+  note_change_t             note;
+  logic                     note_ready;
+  note_change_t [      3:0] pipeline_notes;
+  logic           [3:0]     pipeline_notes_ready;
+
+  Polyphony dut (
+      .clock_50_000_000(clock),
+      .reset_l,
+      .note,
+      .note_ready,
+      .pipeline_notes,
+      .pipeline_notes_ready
   );
 
+  // clock
   initial begin
-    $display(
-        "\tinput_en | note_in_en | note_in | velocity_in | notes_out_en |       notes_out |  velocities_out");
-    $monitor(
-        "\t       %b |          %b |     %03d |         %03d |   %b  %b  %b  %b | %03d %03d %03d %03d | %03d %03d %03d %03d",
-        input_en, note_in_en, note_in, velocity_in, notes_out_en[3], notes_out_en[2],
-        notes_out_en[1], notes_out_en[0], notes_out[3], notes_out[2], notes_out[1], notes_out[0],
-        velocities_out[3], velocities_out[2], velocities_out[1], velocities_out[0]);
-    input_en = 0;
-    reset    = 1;
-    #1.5 reset = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 10;
-    velocity_in = 20;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 20;
-    velocity_in = 40;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 30;
-    velocity_in = 60;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 40;
-    velocity_in = 80;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 50;
-    velocity_in = 100;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 10;
-    velocity_in = 20;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 20;
-    velocity_in = 40;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 30;
-    velocity_in = 60;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 40;
-    velocity_in = 80;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 50;
-    velocity_in = 100;
-    #10 input_en = 0;
-
-    #10 $finish;
+    clock = 1'b0;
+    forever #1 clock = ~clock;
   end
-endmodule
 
-module pc_test4 ();
-  import conFFTi::*;
+  // initialization
+  initial begin
+    reset_l <= 1'b0;
+    @(posedge clock);
+    reset_l <= 1'b1;
+  end
 
-  logic                input_en;
-  logic                clk;
-  logic                reset;
-  note_en_t            note_in_en;
-  logic     [6:0]      note_in;
-  logic     [6:0]      velocity_in;
-  logic     [3:0]      notes_out_en;
-  logic     [3:0][6:0] notes_out;
-  logic     [3:0][6:0] velocities_out;
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("%p", pipeline_notes);
+    end
 
-  clock c (.clk);
-  PolyphonyControl dut (
-      .input_en,
-      .clk,
-      .reset,
-      .note_in_en,
-      .note_in,
-      .velocity_in,
-      .notes_out_en,
-      .notes_out,
-      .velocities_out
+  // trace
+  initial begin
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd10, 7'd20};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd20, 7'd40};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd30, 7'd60};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd40, 7'd80};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    // does not play
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd50, 7'd100};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    // does not play
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd60, 7'd120};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd10, 7'd20};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd20, 7'd40};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd30, 7'd60};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd40, 7'd80};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    // no effect
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd50, 7'd100};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    // no effect
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd60, 7'd120};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    $finish;
+  end
+
+endmodule : PolyphonyTest3
+
+module PolyphonyTest4 ();
+
+  import MIDI::*;
+
+  logic                     clock;
+  logic                     reset_l;
+  note_change_t             note;
+  logic                     note_ready;
+  note_change_t [      3:0] pipeline_notes;
+  logic           [3:0]     pipeline_notes_ready;
+
+  Polyphony dut (
+      .clock_50_000_000(clock),
+      .reset_l,
+      .note,
+      .note_ready,
+      .pipeline_notes,
+      .pipeline_notes_ready
   );
 
+  // clock
   initial begin
-    $display(
-        "\tinput_en | note_in_en | note_in | velocity_in | notes_out_en |       notes_out |  velocities_out");
-    $monitor(
-        "\t       %b |          %b |     %03d |         %03d |   %b  %b  %b  %b | %03d %03d %03d %03d | %03d %03d %03d %03d",
-        input_en, note_in_en, note_in, velocity_in, notes_out_en[3], notes_out_en[2],
-        notes_out_en[1], notes_out_en[0], notes_out[3], notes_out[2], notes_out[1], notes_out[0],
-        velocities_out[3], velocities_out[2], velocities_out[1], velocities_out[0]);
-    input_en = 0;
-    reset    = 1;
-    #1.5 reset = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 10;
-    velocity_in = 20;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 10;
-    velocity_in = 20;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 20;
-    velocity_in = 40;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 20;
-    velocity_in = 40;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 30;
-    velocity_in = 60;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 30;
-    velocity_in = 60;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 40;
-    velocity_in = 80;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 40;
-    velocity_in = 80;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 50;
-    velocity_in = 100;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 50;
-    velocity_in = 100;
-    #10 input_en = 0;
-
-    #10 $finish;
+    clock = 1'b0;
+    forever #1 clock = ~clock;
   end
-endmodule
 
-module pc_test5 ();
-  import conFFTi::*;
+  // initialization
+  initial begin
+    reset_l <= 1'b0;
+    @(posedge clock);
+    reset_l <= 1'b1;
+  end
 
-  logic                input_en;
-  logic                clk;
-  logic                reset;
-  note_en_t            note_in_en;
-  logic     [6:0]      note_in;
-  logic     [6:0]      velocity_in;
-  logic     [3:0]      notes_out_en;
-  logic     [3:0][6:0] notes_out;
-  logic     [3:0][6:0] velocities_out;
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("%p", pipeline_notes);
+    end
 
-  clock c (.clk);
-  PolyphonyControl dut (
-      .input_en,
-      .clk,
-      .reset,
-      .note_in_en,
-      .note_in,
-      .velocity_in,
-      .notes_out_en,
-      .notes_out,
-      .velocities_out
+  // trace
+  initial begin
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd10, 7'd20};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd10, 7'd20};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd20, 7'd40};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd20, 7'd40};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd30, 7'd60};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd30, 7'd60};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd40, 7'd80};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd40, 7'd80};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd50, 7'd100};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd50, 7'd100};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    $finish;
+  end
+endmodule : PolyphonyTest4
+
+module PolyphonyTest5 ();
+
+  import MIDI::*;
+
+  logic                     clock;
+  logic                     reset_l;
+  note_change_t             note;
+  logic                     note_ready;
+  note_change_t [      3:0] pipeline_notes;
+  logic           [3:0]     pipeline_notes_ready;
+
+  Polyphony dut (
+      .clock_50_000_000(clock),
+      .reset_l,
+      .note,
+      .note_ready,
+      .pipeline_notes,
+      .pipeline_notes_ready
   );
 
+  // clock
   initial begin
-    $display(
-        "\tinput_en | note_in_en | note_in | velocity_in | notes_out_en |       notes_out |  velocities_out");
-    $monitor(
-        "\t       %b |          %b |     %03d |         %03d |   %b  %b  %b  %b | %03d %03d %03d %03d | %03d %03d %03d %03d",
-        input_en, note_in_en, note_in, velocity_in, notes_out_en[3], notes_out_en[2],
-        notes_out_en[1], notes_out_en[0], notes_out[3], notes_out[2], notes_out[1], notes_out[0],
-        velocities_out[3], velocities_out[2], velocities_out[1], velocities_out[0]);
-    input_en = 0;
-    reset    = 1;
-    #1.5 reset = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 10;
-    velocity_in = 20;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 20;
-    velocity_in = 40;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 20;
-    velocity_in = 40;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 40;
-    velocity_in = 80;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 30;
-    velocity_in = 60;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 10;
-    velocity_in = 20;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 30;
-    velocity_in = 60;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = ON;
-    note_in     = 50;
-    velocity_in = 100;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 40;
-    velocity_in = 80;
-    #10 input_en = 0;
-
-    #10 input_en = 1;
-    note_in_en  = OFF;
-    note_in     = 50;
-    velocity_in = 100;
-    #10 input_en = 0;
-
-    #10 $finish;
+    clock = 1'b0;
+    forever #1 clock = ~clock;
   end
-endmodule
+
+  // initialization
+  initial begin
+    reset_l <= 1'b0;
+    @(posedge clock);
+    reset_l <= 1'b1;
+  end
+
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("%p", pipeline_notes);
+    end
+
+  // trace
+  initial begin
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd10, 7'd20};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd20, 7'd40};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd20, 7'd40};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd40, 7'd80};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd30, 7'd60};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd10, 7'd20};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {OFF, 7'd30, 7'd60};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd50, 7'd100};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd40, 7'd80};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    note       <= {ON, 7'd50, 7'd100};
+    note_ready <= 1;
+    @(posedge clock);
+    note_ready <= 0;
+
+    repeat (20) @(posedge clock);
+    $finish;
+  end
+
+endmodule : PolyphonyTest5

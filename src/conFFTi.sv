@@ -31,6 +31,19 @@ module conFFTi (
       .parameters
   );
 
+  MIDI::note_change_t [CONFIG::PIPELINE_COUNT-1:0] pipeline_notes;
+  logic [CONFIG::PIPELINE_COUNT-1:0] pipeline_notes_ready;
+  Dispatcher #(
+      .PIPELINE_COUNT(CONFIG::PIPELINE_COUNT)
+  ) dispatcher (
+      .clock_50_000_000,
+      .reset_l,
+      .message,
+      .message_ready,
+      .pipeline_notes,
+      .pipeline_notes_ready
+  );
+
   // TODO: change this placeholder
   import CONFIG::AUDIO_SAMPLE_RATE;
   import CONFIG::AUDIO_CLOCK;

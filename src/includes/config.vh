@@ -11,7 +11,7 @@ package CONFIG;
   parameter AUDIO_BIT_WIDTH = 24;
   parameter AUDIO_SAMPLE_RATE = 44100;  // 44.1 KHz
 
-  parameter POLYPHONY_COUNT = 4;
+  parameter PIPELINE_COUNT = 4;
 
 endpackage : CONFIG
 

@@ -1,67 +1,87 @@
-// `default_nettype none
+`default_nettype none
 
-`include "../internal_defines.vh"
+`include "../includes/midi.vh"
 
-module PolyphonyControl
-  import conFFTi::*;
+module Polyphony
+  import MIDI::*;
 #(
-    parameter COUNT = 4
+    parameter PIPELINE_COUNT = 4
 ) (
-    input  wire logic                      input_en,
-    input  wire logic                      clk,
-    input  wire logic                      reset,
-    input  note_en_t                  note_in_en,
-    input  wire logic     [      6:0]      note_in,
-    input  wire logic     [      6:0]      velocity_in,
-    output logic          [COUNT-1:0]      notes_out_en,
-    output logic          [COUNT-1:0][6:0] notes_out,
-    output logic          [COUNT-1:0][6:0] velocities_out
+    input  logic                              clock_50_000_000,
+    input  logic                              reset_l,
+    input  note_change_t                      note,
+    input  logic                              note_ready,
+    output note_change_t [PIPELINE_COUNT-1:0] pipeline_notes,
+    output logic         [PIPELINE_COUNT-1:0] pipeline_notes_ready
 );
 
+  note_t     pipeline_note_numbers[PIPELINE_COUNT-1:0];
+  velocity_t pipeline_velocities  [PIPELINE_COUNT-1:0];
+  status_t   pipeline_status      [PIPELINE_COUNT-1:0];
 
-  logic                       has_empty_pipeline;
-  logic [$clog2(COUNT+1)-1:0] next_pipeline;
-  search #(
-      .ELEMENT_WIDTH(1),
-      .ELEMENT_COUNT(COUNT)
-  ) state_search (
-      .needle  (1'b0),
-      .heystack(notes_out_en),
-      .contains(has_empty_pipeline),
-      .index   (next_pipeline)
+  generate
+    genvar i;
+    for (i = 0; i < PIPELINE_COUNT; i++) begin : rewire
+      assign pipeline_notes[i].status      = pipeline_status[i];
+      assign pipeline_notes[i].note_number = pipeline_note_numbers[i];
+      assign pipeline_notes[i].velocity    = pipeline_velocities[i];
+    end
+  endgenerate
+
+  logic                              is_available;
+  logic [$clog2(PIPELINE_COUNT)-1:0] index_available;
+  Search #(
+      .ELEMENT_WIDTH($bits(status_t)),
+      .ELEMENT_COUNT(PIPELINE_COUNT)
+  ) status_search (
+      .needle  (OFF),
+`ifdef SIMULATION // To pacify ModelSim
+      .heystack({pipeline_status}),
+`else
+      .heystack(pipeline_status),
+`endif
+      .contains(is_available),
+      .index   (index_available)
   );
-  logic                       note_playing;
-  logic [$clog2(COUNT+1)-1:0] note_pipeline;
-  search #(
-      .ELEMENT_WIDTH(7),
-      .ELEMENT_COUNT(COUNT)
-  ) note_search (
-      .needle  (note_in),
-      .heystack(notes_out),
-      .contains(note_playing),
-      .index   (note_pipeline)
+  logic                              is_playing;
+  logic [$clog2(PIPELINE_COUNT)-1:0] index_playing;
+  Search #(
+      .ELEMENT_WIDTH(DATA_WIDTH),
+      .ELEMENT_COUNT(PIPELINE_COUNT)
+  ) note_number_search (
+      .needle  (note.note_number),
+      .heystack(pipeline_note_numbers),
+      .contains(is_playing),
+      .index   (index_playing)
   );
 
-  always @(posedge reset, posedge clk)
-    if (reset) begin
-      notes_out_en   <= '0;
-      velocities_out <= '0;
-      notes_out      <= '0;
-    end else if (input_en) begin
-      unique case (note_in_en)
-        ON:
-        if (!note_playing && has_empty_pipeline) begin
-          notes_out_en[next_pipeline]   <= 1'b1;
-          notes_out[next_pipeline]      <= note_in;
-          velocities_out[next_pipeline] <= velocity_in;
+  always_ff @(posedge clock_50_000_000, negedge reset_l)
+    if (!reset_l) begin
+      for (int j = 0; j < PIPELINE_COUNT; j++) begin : clear
+        pipeline_status[j]       <= OFF;
+        pipeline_note_numbers[j] <= '0;
+        pipeline_velocities[j]   <= '0;
+      end
+      pipeline_notes_ready <= '0;
+    end else if (note_ready) begin
+      unique case (note.status)
+        ON: begin
+          if (!is_playing && is_available) begin
+            pipeline_status[index_available]       <= ON;
+            pipeline_note_numbers[index_available] <= note.note_number;
+            pipeline_velocities[index_available]   <= note.velocity;
+            pipeline_notes_ready                   <= '1;
+          end
         end
-        OFF:
-        if (note_playing) begin
-          notes_out_en[note_pipeline]   <= 1'b0;
-          notes_out[note_pipeline]      <= '0;
-          velocities_out[note_pipeline] <= '0;
+        OFF: begin
+          if (is_playing) begin
+            pipeline_status[index_playing]       <= OFF;
+            pipeline_note_numbers[index_playing] <= '0;
+            pipeline_velocities[index_playing]   <= '0;
+            pipeline_notes_ready                 <= '1;
+          end
         end
       endcase
-    end
+    end else pipeline_notes_ready <= '0;
 
-endmodule
+endmodule : Polyphony

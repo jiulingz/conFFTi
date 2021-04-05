@@ -14,8 +14,8 @@ module ParameterControl (
 
   control_change_t control_change;
   program_change_t program_change;
-  assign control_change = message;
-  assign program_change = message;
+  assign control_change = {message.data_byte1, message.data_byte2};
+  assign program_change = message.data_byte1;
 
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
     if (!reset_l) begin
