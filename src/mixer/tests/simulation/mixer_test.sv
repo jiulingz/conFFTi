@@ -1,32 +1,32 @@
-module mixer_test ();
+`default_nettype none
 
-  logic [23:0] pipe1, pipe2, pipe3, pipe4, mixer_output;
+module MixerTest ();
 
-  mixer Mixer (.*);
+  logic [ 3:0][23:0] pipeline_audios;
+  logic [23:0]       audio_out;
+
+  Mixer dut (
+      .pipeline_audios,
+      .audio_out
+  );
 
   initial begin
-    $monitor($time, " pipe1=%b, pipe2=%b, pipe3=%b, pipe4=%b, mixer_output=%b", pipe1, pipe2, pipe3, pipe4, mixer_output);
+    $monitor("\t%p, %p", pipeline_audios, audio_out);
 
-    #10 pipe1 = 24'h3FFFFF;
-    pipe2 = 24'h3FFFFF;
-    pipe3 = 24'h3FFFFF;
-    pipe4 = 24'h3FFFFF;
+    pipeline_audios = {24'hFFFFFF, 24'hFFFFFF, 24'hFFFFFF, 24'hFFFFFF};
+    #10;
+    pipeline_audios = {24'hFFFFFF, 24'hFFFFFF, 24'hFFFFFF, 24'hFFFFFC};
+    #10;
+    pipeline_audios = {24'h3FFFFF, 24'h3FFFFF, 24'h3FFFFF, 24'h3FFFFF};
+    #10;
+    pipeline_audios = {24'h00FFFF, 24'h00FFF, 24'h00FFF, 24'h00FFF};
+    #10;
+    pipeline_audios = {24'h3, 24'h1, 24'h2, 24'h0};
+    #10;
+    pipeline_audios = {24'hF, 24'hF, 24'hF, 24'hF};
 
-    #10 pipe1 = 24'h00FFFF;
-    pipe2 = 24'h00FFF;
-    pipe3 = 24'h00FFF;
-    pipe4 = 24'h00FFF;
-
-    #10 pipe1 = 24'h3;
-    pipe2 = 24'h1;
-    pipe3 = 24'h2;
-    pipe4 = 24'h0;
-
-    #10 pipe1 = 24'hF;
-    pipe2 = 24'hF;
-    pipe3 = 24'hF;
-    pipe4 = 24'hF;
-
+    #10;
+    $finish;
   end
 
-endmodule: mixer_test
+endmodule : MixerTest

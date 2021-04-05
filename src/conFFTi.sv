@@ -44,7 +44,11 @@ module conFFTi (
       .pipeline_notes_ready
   );
 
+  logic [CONFIG::PIPELINE_COUNT-1:0][CONFIG::AUDIO_BIT_WIDTH-1:0] pipeline_audios;
   // TODO: change this placeholder
+  always_comb begin
+    for (int i = 1; i < CONFIG::PIPELINE_COUNT; i++) pipeline_audios[i] = '0;
+  end
   import CONFIG::AUDIO_SAMPLE_RATE;
   import CONFIG::AUDIO_CLOCK;
   localparam EDGES = 2;
@@ -63,9 +67,15 @@ module conFFTi (
         sample_count <= sample_count + 1'b1;
       end
     end
-
   always_ff @(posedge clock_44_100, negedge reset_l)
-    if (!reset_l) audio_out <= '0;
-    else audio_out <= audio_out + (1 << 16);
+    if (!reset_l) pipeline_audios[0] <= '0;
+    else pipeline_audios[0] <= pipeline_audios[0] + (1 << 16);
+
+  Mixer #(
+      .PIPELINE_COUNT(CONFIG::PIPELINE_COUNT)
+  ) mixer (
+      .pipeline_audios,
+      .audio_out
+  );
 
 endmodule
