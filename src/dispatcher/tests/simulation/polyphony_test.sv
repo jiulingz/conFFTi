@@ -28,19 +28,19 @@ module PolyphonyTest1 ();
     forever #1 clock = ~clock;
   end
 
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("\t%p", pipeline_notes);
+    end
+
   // initialization
   initial begin
     reset_l <= 1'b0;
     @(posedge clock);
     reset_l <= 1'b1;
   end
-
-  // display
-  initial
-    forever begin
-      @(posedge clock);
-      if (pipeline_notes_ready) $display("%p", pipeline_notes);
-    end
 
   // trace
   initial begin
@@ -90,19 +90,19 @@ module PolyphonyTest2 ();
     forever #1 clock = ~clock;
   end
 
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("\t%p", pipeline_notes);
+    end
+
   // initialization
   initial begin
     reset_l <= 1'b0;
     @(posedge clock);
     reset_l <= 1'b1;
   end
-
-  // display
-  initial
-    forever begin
-      @(posedge clock);
-      if (pipeline_notes_ready) $display("%p", pipeline_notes);
-    end
 
   // trace
   initial begin
@@ -188,19 +188,19 @@ module PolyphonyTest3 ();
     forever #1 clock = ~clock;
   end
 
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("\t%p", pipeline_notes);
+    end
+
   // initialization
   initial begin
     reset_l <= 1'b0;
     @(posedge clock);
     reset_l <= 1'b1;
   end
-
-  // display
-  initial
-    forever begin
-      @(posedge clock);
-      if (pipeline_notes_ready) $display("%p", pipeline_notes);
-    end
 
   // trace
   initial begin
@@ -314,19 +314,19 @@ module PolyphonyTest4 ();
     forever #1 clock = ~clock;
   end
 
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("\t%p", pipeline_notes);
+    end
+
   // initialization
   initial begin
     reset_l <= 1'b0;
     @(posedge clock);
     reset_l <= 1'b1;
   end
-
-  // display
-  initial
-    forever begin
-      @(posedge clock);
-      if (pipeline_notes_ready) $display("%p", pipeline_notes);
-    end
 
   // trace
   initial begin
@@ -423,19 +423,19 @@ module PolyphonyTest5 ();
     forever #1 clock = ~clock;
   end
 
+  // display
+  initial
+    forever begin
+      @(posedge clock);
+      if (pipeline_notes_ready) $display("\t%p", pipeline_notes);
+    end
+
   // initialization
   initial begin
     reset_l <= 1'b0;
     @(posedge clock);
     reset_l <= 1'b1;
   end
-
-  // display
-  initial
-    forever begin
-      @(posedge clock);
-      if (pipeline_notes_ready) $display("%p", pipeline_notes);
-    end
 
   // trace
   initial begin

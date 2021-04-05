@@ -12,7 +12,7 @@ module MIDIDecoderTest;
   logic     [7:0] data_in;
   logic           data_in_ready;
 
-  MIDIDecoder midi_decoder (
+  MIDIDecoder dut (
       .clock_50_000_000(clock),
       .reset_l,
       .data_in,
@@ -21,23 +21,29 @@ module MIDIDecoderTest;
       .message_ready
   );
 
+  // clock
   initial begin
     clock = 0;
     forever #1 clock = ~clock;
   end
 
+  // display
   initial
     forever begin
       @(posedge clock);
-      if (message_ready) $display("%p", message);
+      if (message_ready) $display("\t%p", message);
     end
 
+  // initialization
   initial begin
     data_in_ready <= 1'b0;
-    reset_l       <= 1'b0;
-    repeat (20) @(posedge clock);
+    reset_l <= 1'b0;
+    @(posedge clock);
     reset_l <= 1'b1;
+  end
 
+  // trace
+  initial begin
     repeat (20) @(posedge clock);
     data_in_ready <= 1'b1;
     data_in       <= {NOTE_ON, 4'b0000};

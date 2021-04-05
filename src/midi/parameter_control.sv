@@ -4,8 +4,8 @@
 `include "../includes/midi.vh"
 
 module ParameterControl (
-    input                         clock_50_000_000,
-    input                         reset_l,
+    input  logic                  clock_50_000_000,
+    input  logic                  reset_l,
     input  MIDI::message_t        message,
     output PARAMETER::parameter_t parameters
 );

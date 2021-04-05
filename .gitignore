@@ -27,6 +27,10 @@
 # Allow for readme files
 !/README.md
 
+# Allow for Makefile
+!Makefile
+!*.mk
+
 # Allow for Verilog and System Verilog files
 !*.sv
 !*.v

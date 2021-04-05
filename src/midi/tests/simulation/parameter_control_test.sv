@@ -24,25 +24,33 @@ module ParameterControlTest;
       .message_ready
   );
 
-  ParameterControl parameter_control (
+  ParameterControl dut (
       .clock_50_000_000(clock),
       .reset_l,
       .message,
       .parameters
   );
 
+  // clock
   initial begin
     clock = 0;
     forever #1 clock = ~clock;
   end
 
+  // display
+  initial
+    $monitor("\t%p", parameters);
+
+  // initialization
   initial begin
-    $monitor("%p", parameters);
     data_in_ready <= 1'b0;
     reset_l       <= 1'b0;
-    repeat (20) @(posedge clock);
+    @(posedge clock);
     reset_l <= 1'b1;
+  end
 
+  // trace
+  initial begin
     repeat (20) @(posedge clock);
     data_in_ready <= 1'b1;
     data_in       <= {CONTROL_CHANGE, 4'b0000};

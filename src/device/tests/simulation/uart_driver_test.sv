@@ -9,12 +9,12 @@ module UARTDriverTest ();
   logic [7:0] data_in;
 
   assign uart_rx = uart_tx;
-  Sender s (
+  Sender sender (
       .clock(clock_send),
       .reset_l,
       .uart_tx
   );
-  UARTDriver r (
+  UARTDriver dut (
       .clock_50_000_000(clock_recv),
       .reset_l,
       .uart_rx,
@@ -32,24 +32,25 @@ module UARTDriverTest ();
     forever #1 clock_recv = ~clock_recv;
   end
 
-  // termination
-  initial begin
-    repeat (500) @(posedge clock_send);
-    $finish;
-  end
+  // display
+  initial
+    forever begin
+      @(posedge clock_recv);
+      if (data_in_ready) $display("\t%b", data_in);
+    end
 
-  // reset_l
+  // initialization
   initial begin
     reset_l <= 1'b0;
     @(posedge clock_recv);
     reset_l <= 1'b1;
   end
 
-  initial
-    forever begin
-      @(posedge clock_recv);
-      if (data_in_ready) $display("%b", data_in);
-    end
+  // trace
+  initial begin
+    repeat (500) @(posedge clock_send);
+    $finish;
+  end
 
 endmodule : UARTDriverTest
 
