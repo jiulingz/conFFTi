@@ -21,4 +21,4 @@ module Search #(
   assign contains = i < ELEMENT_COUNT;
   assign index    = i[0+:INDEX_WIDTH];
 
-endmodule
+endmodule : Search

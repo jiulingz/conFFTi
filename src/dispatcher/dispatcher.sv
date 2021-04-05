@@ -39,4 +39,4 @@ module Dispatcher
       .pipeline_notes_ready
   );
 
-endmodule
+endmodule : Dispatcher

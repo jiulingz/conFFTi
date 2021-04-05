@@ -53,7 +53,7 @@ module DACDriver
 
   // Sample audio_out
   logic [AUDIO_BIT_WIDTH-1:0] audio_sample;
-  always_ff @(posedge i2s_left_right_clock or negedge reset_l) begin
+  always_ff @(posedge i2s_left_right_clock, negedge reset_l) begin
     audio_sample <= audio_out;
   end
 
