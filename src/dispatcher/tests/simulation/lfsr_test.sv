@@ -1,69 +1,115 @@
-`default_nettype none
+module LFSRTest1 ();
 
-module lfsr_test ();
-  logic clk;
-  logic reset;
+  logic clock;
+  logic reset_l;
   logic en;
   logic q;
 
-  lfsr dut (
-      .clk,
-      .reset,
+  LFSR lfsr (
+      .clock,
+      .reset_l,
       .en,
       .q
   );
 
   initial begin
-    clk = 1;
-    forever #5 clk = ~clk;
+    clock = 0;
+    forever #1 clock = ~clock;
+  end
+
+  initial forever begin
+    @(posedge clock);
+    $display("%b", q);
   end
 
   initial begin
-    $monitor($time,, "q=%b", q);
-    reset <= 1'b1;
-    en    <= 1'b1;
-    @(posedge clk);
-    reset <= 1'b0;
-
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-
-    $display("hold");
-    reset <= 1'b1;
-    @(posedge clk);
-    reset <= 1'b0;
-    en <= 1'b0;
-
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    #10 $finish;
+    repeat (30) @(posedge clock);
+    $finish;
   end
-endmodule
+
+  initial begin
+    reset_l <= 1'b0;
+    en    <= 1'b1;
+    @(posedge clock);
+    reset_l <= 1'b1;
+  end
+
+endmodule : LFSRTest1
+
+module LFSRTest2 ();
+
+  logic clock;
+  logic reset_l;
+  logic en;
+  logic q;
+
+  LFSR lfsr (
+      .clock,
+      .reset_l,
+      .en,
+      .q
+  );
+
+  initial begin
+    clock = 0;
+    forever #1 clock = ~clock;
+  end
+
+  initial forever begin
+    @(posedge clock);
+    $display("%b", q);
+  end
+
+  initial begin
+    repeat (30) @(posedge clock);
+    $finish;
+  end
+
+  initial begin
+    reset_l <= 1'b0;
+    en    <= 1'b0;
+    @(posedge clock);
+    reset_l <= 1'b1;
+  end
+
+endmodule : LFSRTest2
+
+module LFSRTest3 ();
+
+  logic clock;
+  logic reset_l;
+  logic en;
+  logic q;
+
+  LFSR lfsr (
+      .clock,
+      .reset_l,
+      .en,
+      .q
+  );
+
+  initial begin
+    clock = 0;
+    forever #1 clock = ~clock;
+  end
+
+  initial forever begin
+    @(posedge clock);
+    $display("%b", q);
+  end
+
+  initial begin
+    repeat (30) @(posedge clock);
+    $finish;
+  end
+
+  initial begin
+    reset_l <= 1'b0;
+    en    <= 1'b1;
+    @(posedge clock);
+    reset_l <= 1'b1;
+    repeat (5) @(posedge clock);
+    en    <= 1'b0;
+  end
+
+endmodule : LFSRTest3
