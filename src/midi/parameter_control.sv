@@ -13,9 +13,7 @@ module ParameterControl (
   import PARAMETER::*;
 
   control_change_t control_change;
-  program_change_t program_change;
   assign control_change = {message.data_byte1, message.data_byte2};
-  assign program_change = message.data_byte1;
 
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
     if (!reset_l) begin
@@ -31,12 +29,6 @@ module ParameterControl (
             SUSTAIN: parameters.sustain_level <= control_change.value;
             RELEASE: parameters.release_time <= control_change.value;
             VOLUME:  parameters.volume <= control_change.value;
-            default: parameters <= parameters;
-          endcase
-        end
-        PROGRAM_CHANGE: begin
-          // TODO: (ck3) add program changes (key press)
-          unique case (program_change.program_number)
             default: parameters <= parameters;
           endcase
         end

@@ -110,7 +110,7 @@ module MIDIDecoderTest;
 
     repeat (20) @(posedge clock);
     data_in_ready <= 1'b1;
-    data_in       <= {PROGRAM_CHANGE, 4'b0000};
+    data_in       <= {4'hC, 4'b0000}; // Program change, Ignore.
     @(posedge clock);
     data_in_ready <= 1'b0;
     repeat (20) @(posedge clock);

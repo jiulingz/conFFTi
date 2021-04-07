@@ -44,7 +44,7 @@ module MIDIDecoder
             unique case (byte_type)
               MIDI::STATUS: begin
                 unique case (message_type)
-                  NOTE_ON, NOTE_OFF, CONTROL_CHANGE, PROGRAM_CHANGE: begin
+                  NOTE_ON, NOTE_OFF, CONTROL_CHANGE: begin
                     state               <= DATA_BYTE_1;
                     buffer.message_type <= message_type;
                   end
@@ -68,10 +68,6 @@ module MIDIDecoder
                 unique case (buffer.message_type)
                   NOTE_ON, NOTE_OFF, CONTROL_CHANGE: begin
                     state             <= DATA_BYTE_2;
-                    buffer.data_byte1 <= data_byte;
-                  end
-                  PROGRAM_CHANGE: begin
-                    state             <= FINISH;
                     buffer.data_byte1 <= data_byte;
                   end
                   default: begin  // invalid byte

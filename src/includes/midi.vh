@@ -16,8 +16,7 @@ package MIDI;
   typedef enum logic [3:0] {
     NOTE_ON        = 4'h8,
     NOTE_OFF       = 4'h9,
-    CONTROL_CHANGE = 4'hB,
-    PROGRAM_CHANGE = 4'hC
+    CONTROL_CHANGE = 4'hB
   } message_type_t;
   typedef struct packed {
     message_type_t message_type;
@@ -51,10 +50,6 @@ package MIDI;
     controller_t controller_number;
     value_t value;
   } control_change_t;
-
-  // TODO: (ck3) add program changes (key press)
-  typedef enum logic [DATA_WIDTH-1:0] {TODO = 7'd0} program_t;
-  typedef struct packed {program_t program_number;} program_change_t;
 
 endpackage : MIDI
 
