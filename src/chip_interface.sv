@@ -37,12 +37,12 @@ module ChipInterface (
   logic                               i2s_data;
   logic [CONFIG::AUDIO_BIT_WIDTH-1:0] audio_out;
 
-  assign clock_50_000_000     = CLOCK_50;
-  assign reset_l              = KEY[0];
-  assign uart_rx              = GPIO[6];
-  assign i2s_bit_clock        = GPIO[0];
-  assign i2s_data             = GPIO[1];
-  assign i2s_left_right_clock = GPIO[3];
+  assign clock_50_000_000 = CLOCK_50;
+  assign reset_l          = KEY[0];
+  assign uart_rx          = GPIO[6];
+  assign GPIO[0]          = i2s_bit_clock;
+  assign GPIO[1]          = i2s_data;
+  assign GPIO[2]          = i2s_left_right_clock;
 
   AudioPLL audio_pll (
       .ref_clk_clk       (clock_50_000_000),
