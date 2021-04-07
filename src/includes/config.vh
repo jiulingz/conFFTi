@@ -13,6 +13,14 @@ package CONFIG;
 
   parameter PIPELINE_COUNT = 4;
 
+  parameter PERCENT_WIDTH = 7;
+  typedef logic [PERCENT_WIDTH-1:0] percent_t;
+  parameter LONG_PERCENT_WIDTH = 8;
+  typedef logic [LONG_PERCENT_WIDTH-1:0] long_percent_t;
+
+  parameter AUDIO_GENERATION_FREQUENCY = 50000;  // 50 KHz
+  parameter PERIOD_WIDTH = 11; // 21 = $clog2(50,000 / 27.5), 27.5 = A0 frequency
+
 endpackage : CONFIG
 
 `endif  /* CONFIG_VH_ */

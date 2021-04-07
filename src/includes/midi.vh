@@ -8,6 +8,8 @@ package MIDI;
   parameter DATA_WIDTH = 7;
   parameter CHANNEL_WIDTH = 4;
 
+  parameter NOTE_NUMBER_START = 21;
+
   typedef enum logic {
     STATUS = 1'b1,
     DATA   = 1'b0

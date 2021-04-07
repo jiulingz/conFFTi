@@ -8,6 +8,6 @@ else
 	@vsim -c -do "run -all" $(TEST)
 endif
 
-INCLUDES="+define+CONFIG_VH_ +define+MIDI_VH_ +define+PARAMETER_VH_"
+INCLUDES="+define+CONFIG_VH_ +define+MIDI_VH_ +define+PARAMETER_VH_ +define+OSCILLATOR_VH_"
 %_test:
 	@vlog $(INCLUDES) +define+SIMULATION -sv -svinputport=var $^

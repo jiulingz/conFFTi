@@ -63,7 +63,6 @@ module ChipInterface (
 
   conFFTi conffti (
       .clock_50_000_000,
-      .clock_16_934_400,
       .reset_l,
       .data_in,
       .data_in_ready,
@@ -79,4 +78,4 @@ module ChipInterface (
       .i2s_data
   );
 
-endmodule
+endmodule : ChipInterface
