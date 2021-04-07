@@ -45,7 +45,7 @@ module Pipeline (
   end
   assign period = period_table[note.note_number-NOTE_NUMBER_START];
 
-  // TODO: (hongrunz) add ADSR + volume
+  // TODO: (hongrunz) add ADSR + velocity
   // TODO: (mychang) add unision detune
 
   // output
