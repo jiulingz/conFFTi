@@ -44,7 +44,6 @@
 
 # Allow for C++ and hex files
 !*.cpp
-!*.hex
 
 # Allow for memory files
 !*.vm
