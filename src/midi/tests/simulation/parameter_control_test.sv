@@ -6,14 +6,15 @@ module ParameterControlTest;
   import MIDI::*;
   import PARAMETER::*;
 
-  logic             clock;
-  logic             reset_l;
-  logic             ready;
-  message_t         message;
-  logic             message_ready;
-  logic       [7:0] data_in;
-  logic             data_in_ready;
-  parameter_t       parameters;
+  logic                    clock;
+  logic                    reset_l;
+  logic                    ready;
+  message_t                message;
+  logic                    message_ready;
+  logic              [7:0] data_in;
+  logic                    data_in_ready;
+  parameter_t              parameters;
+  parameter_change_t       parameter_changes;
 
   MIDIDecoder midi_decoder (
       .clock_50_000_000(clock),
@@ -28,7 +29,9 @@ module ParameterControlTest;
       .clock_50_000_000(clock),
       .reset_l,
       .message,
-      .parameters
+      .message_ready,
+      .parameters,
+      .parameter_changes
   );
 
   // clock
@@ -38,8 +41,7 @@ module ParameterControlTest;
   end
 
   // display
-  initial
-    $monitor("\t%p", parameters);
+  initial $monitor("\t%p, %p", parameters, parameter_changes);
 
   // initialization
   initial begin

@@ -7,12 +7,14 @@ module Dispatcher
 #(
     parameter PIPELINE_COUNT = 4
 ) (
-    input  logic                              clock_50_000_000,
-    input  logic                              reset_l,
-    input  message_t                          message,
-    input  logic                              message_ready,
-    output note_change_t [PIPELINE_COUNT-1:0] pipeline_notes,
-    output logic         [PIPELINE_COUNT-1:0] pipeline_notes_ready
+    input  logic                                              clock_50_000_000,
+    input  logic                                              reset_l,
+    input  PARAMETER::parameter_t                             parameters,
+    input  PARAMETER::parameter_change_t                      parameter_changes,
+    input  message_t                                          message,
+    input  logic                                              message_ready,
+    output note_change_t                 [PIPELINE_COUNT-1:0] pipeline_notes,
+    output logic                         [PIPELINE_COUNT-1:0] pipeline_notes_ready
 );
 
   note_change_t note;
@@ -38,5 +40,7 @@ module Dispatcher
       .pipeline_notes,
       .pipeline_notes_ready
   );
+
+  // TODO: (jiulingz) add arpegiator
 
 endmodule : Dispatcher

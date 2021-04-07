@@ -20,6 +20,7 @@ module Oscillator (
   import CONFIG::PERIOD_WIDTH;
   import CONFIG::SYSTEM_CLOCK;
   import CONFIG::AUDIO_GENERATION_FREQUENCY;
+  import CONFIG::PERCENT_WIDTH;
 
   oscillator_state_t state;
   long_percent_t     phase;
@@ -35,7 +36,9 @@ module Oscillator (
   logic [           PERIOD_WIDTH-1:0] duty_ticks;
   logic [           PERIOD_WIDTH-1:0] target           [$bits(state):0];
 
-  assign duty_ticks = period * duty_cycle >> CONFIG::PERCENT_WIDTH;
+  logic [PERIOD_WIDTH+PERCENT_WIDTH-1:0] high_precision;
+  assign high_precision = period * duty_cycle;
+  assign duty_ticks = high_precision >> PERCENT_WIDTH;
 
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
     if (!reset_l) begin

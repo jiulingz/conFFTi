@@ -7,7 +7,7 @@
 package PARAMETER;
 
   typedef enum logic [1:0] {
-    SINE = '0,
+    SINE     = '0,
     PULSE,
     TRIANGLE
   } wave_t;
@@ -60,6 +60,22 @@ package PARAMETER;
     arp_rate_t arp_rate;
     arp_rhythm_t arp_rhythm;
   } parameter_t;
+  typedef enum logic [3:0] {
+    PARAM_NONE            = '0,
+    PARAM_VOLUME,
+    PARAM_UNISON_DETUNE,
+    PARAM_ATTACK_TIME,
+    PARAM_DECAY_TIME,
+    PARAM_SUSTAIN_LEVEL,
+    PARAM_RELEASE_TIME,
+    PARAM_TEMPO,
+    PARAM_WAVE,
+    PARAM_DUTY_CYCLE,
+    PARAM_DISPATCHER_MODE,
+    PARAM_ARP_MODE,
+    PARAM_ARP_RATE,
+    PARAM_ARP_RHYTHM
+  } parameter_change_t;
 
 endpackage : PARAMETER
 

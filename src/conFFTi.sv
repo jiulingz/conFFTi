@@ -22,12 +22,15 @@ module conFFTi (
       .message_ready
   );
 
-  PARAMETER::parameter_t parameters;
+  PARAMETER::parameter_t        parameters;
+  PARAMETER::parameter_change_t parameter_changes;
   ParameterControl parameter_control (
       .clock_50_000_000,
       .reset_l,
       .message,
-      .parameters
+      .message_ready,
+      .parameters,
+      .parameter_changes
   );
 
   MIDI::note_change_t [CONFIG::PIPELINE_COUNT-1:0] pipeline_notes;
@@ -37,6 +40,8 @@ module conFFTi (
   ) dispatcher (
       .clock_50_000_000,
       .reset_l,
+      .parameters,
+      .parameter_changes,
       .message,
       .message_ready,
       .pipeline_notes,
@@ -51,6 +56,7 @@ module conFFTi (
           .clock_50_000_000,
           .reset_l,
           .parameters,
+          .parameter_changes,
           .note      (pipeline_notes[i]),
           .note_ready(pipeline_notes_ready[i]),
           .audio     (pipeline_audios[i])
@@ -61,6 +67,7 @@ module conFFTi (
   Mixer #(
       .PIPELINE_COUNT(CONFIG::PIPELINE_COUNT)
   ) mixer (
+      .parameters,
       .pipeline_audios,
       .audio_out
   );
