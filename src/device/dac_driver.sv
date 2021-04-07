@@ -54,7 +54,8 @@ module DACDriver
   // Sample audio_out
   logic [AUDIO_BIT_WIDTH-1:0] audio_sample;
   always_ff @(posedge i2s_left_right_clock, negedge reset_l) begin
-    audio_sample <= audio_out;
+    if (!reset_l) audio_sample <= '0;
+    else audio_sample <= audio_out;
   end
 
   // Generate i2s_data

@@ -3,13 +3,12 @@
 `include "../includes/config.vh"
 `include "../includes/midi.vh"
 
-module Pipeline
-(
-    input  logic                               clock_50_000_000,
-    input  logic                               reset_l,
-    input  parameter_t                         parameters,
-    input  note_change_t                       note,
-    input  logic                               note_ready,
+module Pipeline (
+    input  logic                                       clock_50_000_000,
+    input  logic                                       reset_l,
+    input  parameter_t                                 parameters,
+    input  note_change_t                               note,
+    input  logic                                       note_ready,
     output logic         [CONFIG::AUDIO_BIT_WIDTH-1:0] audio
 );
 
@@ -26,7 +25,7 @@ module Pipeline
   Oscillator oscillator (
       .clock_50_000_000,
       .reset_l,
-      .clear(note_ready && note.status == ON),
+      .clear     (note_ready && note.status == ON),
       .period,
       .duty_cycle(parameters.duty_cycle),
       .sine,
@@ -43,17 +42,17 @@ module Pipeline
     $readmemb("lut/period_table.vm", period_table);
 `endif
   end
-  assign period = period_table[note.note_number - NOTE_NUMBER_START];
+  assign period = period_table[note.note_number-NOTE_NUMBER_START];
 
   // output
   always_comb begin
-    if (note.status == OFF)
-      audio = '0;
-    else case (parameters.wave)
-      SINE: audio = sine;
-      PULSE: audio = pulse;
-      TRIANGLE: audio = triangle;
-    endcase
+    if (note.status == OFF) audio = '0;
+    else
+      case (parameters.wave)
+        SINE:     audio = sine;
+        PULSE:    audio = pulse;
+        TRIANGLE: audio = triangle;
+      endcase
   end
 
 endmodule : Pipeline
