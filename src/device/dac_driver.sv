@@ -66,7 +66,11 @@ module DACDriver
       data_count <= AUDIO_BIT_WIDTH - 1;
     end else begin
       i2s_data <= audio_sample[data_count];
-      if (data_count == 0) data_count <= AUDIO_BIT_WIDTH - 1;
+      if (data_count == 0) begin
+        data_count <= AUDIO_BIT_WIDTH - 1;
+      end else begin
+        data_count <= data_count - 1;
+      end
     end
 
 endmodule : DACDriver
