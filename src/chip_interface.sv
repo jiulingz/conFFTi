@@ -26,16 +26,19 @@ module ChipInterface (
     inout  logic [35:0] GPIO
 );
 
-  logic                               clock_50_000_000;
-  logic                               clock_16_934_400;
-  logic                               reset_l;
-  logic                               uart_rx;
-  logic [     CONFIG::BYTE_WIDTH-1:0] data_in;
-  logic                               data_in_ready;
-  logic                               i2s_bit_clock;
-  logic                               i2s_left_right_clock;
-  logic                               i2s_data;
-  logic [CONFIG::AUDIO_BIT_WIDTH-1:0] audio_out;
+  logic                                    clock_50_000_000;
+  logic                                    clock_16_934_400;
+  logic                                    reset_l;
+  logic                                    uart_rx;
+  logic [     CONFIG::BYTE_WIDTH-1:0]      data_in;
+  logic                                    data_in_ready;
+  logic                                    i2s_bit_clock;
+  logic                                    i2s_left_right_clock;
+  logic                                    i2s_data;
+  logic [CONFIG::AUDIO_BIT_WIDTH-1:0]      audio_out;
+  // debug display
+  logic [                        5:0][3:0] midi_info;
+  logic [                        5:0]      midi_info_en;
 
   assign clock_50_000_000 = CLOCK_50;
   assign reset_l          = KEY[0];
@@ -66,7 +69,10 @@ module ChipInterface (
       .reset_l,
       .data_in,
       .data_in_ready,
-      .audio_out
+      .audio_out,
+      // debug display
+      .midi_info,
+      .midi_info_en
   );
 
   DACDriver dac_driver (
@@ -76,6 +82,12 @@ module ChipInterface (
       .i2s_bit_clock,
       .i2s_left_right_clock,
       .i2s_data
+  );
+
+  SevenSegmentDriver seven_segment_driver (
+      .value  ({8'b0, midi_info}),
+      .en     ({2'b00, midi_info_en}),
+      .segment({HEX7, HEX6, HEX5, HEX4, HEX3, HEX2, HEX1, HEX0})
   );
 
 endmodule : ChipInterface

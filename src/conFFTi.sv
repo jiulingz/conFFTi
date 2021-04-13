@@ -4,11 +4,14 @@
 `include "includes/midi.vh"
 
 module conFFTi (
-    input  logic                               clock_50_000_000,
-    input  logic                               reset_l,
-    input  logic [     CONFIG::BYTE_WIDTH-1:0] data_in,
-    input  logic                               data_in_ready,
-    output logic [CONFIG::AUDIO_BIT_WIDTH-1:0] audio_out
+    input  logic                                    clock_50_000_000,
+    input  logic                                    reset_l,
+    input  logic [     CONFIG::BYTE_WIDTH-1:0]      data_in,
+    input  logic                                    data_in_ready,
+    output logic [CONFIG::AUDIO_BIT_WIDTH-1:0]      audio_out,
+    // debug display
+    output logic [                        5:0][3:0] midi_info,
+    output logic [                        5:0]      midi_info_en
 );
 
   MIDI::message_t message;
@@ -71,5 +74,19 @@ module conFFTi (
       .pipeline_audios,
       .audio_out
   );
+
+  // debug diaplay
+  always_ff @(posedge clock_50_000_000, negedge reset_l) begin
+    if (!reset_l) begin
+      midi_info_en <= '0;
+    end else if (message_ready) begin
+      midi_info_en[4]   <= '1;
+      midi_info[4]      <= message.message_type;
+      midi_info_en[3:2] <= '1;
+      midi_info[3:2]    <= message.data_byte1;
+      midi_info_en[1:0] <= '1;
+      midi_info[1:0]    <= message.data_byte2;
+    end
+  end
 
 endmodule : conFFTi
