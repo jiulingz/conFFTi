@@ -39,7 +39,7 @@ module ChipInterface (
 
   assign clock_50_000_000 = CLOCK_50;
   assign reset_l          = KEY[0];
-  assign uart_rx          = GPIO[6];
+  assign uart_rx          = GPIO[7];
   assign GPIO[0]          = i2s_bit_clock;
   assign GPIO[1]          = i2s_data;
   assign GPIO[2]          = i2s_left_right_clock;
