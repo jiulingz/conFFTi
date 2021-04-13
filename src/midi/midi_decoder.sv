@@ -89,14 +89,11 @@ module MIDIDecoder
               MIDI::DATA: begin
                 unique case (buffer.message_type)
                   NOTE_ON: begin
+                    state             <= FINISH;
+                    buffer.data_byte2 <= data_byte;
                     if (data_byte == 'b0) begin
                       // NOTE_ON with 0 velocity is equivalent to NOTE_OFF
-                      state               <= FINISH;
                       buffer.message_type <= NOTE_OFF;
-                      buffer.data_byte2   <= '0;
-                    end else begin
-                      state             <= FINISH;
-                      buffer.data_byte2 <= data_byte;
                     end
                   end
                   NOTE_OFF: begin
