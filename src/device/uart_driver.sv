@@ -4,7 +4,7 @@
 
 /*
  * Bit stream format
- *      idle       | start |          8 data bits            | stop  |  idle
+ *      idle       | start |  LSB     8 data bits       MSB  | stop  |  idle
  * ________________         _______         ______________    __________________
  *                 |_______|       |_______|              ...
  */
@@ -22,7 +22,7 @@ module UARTDriver
 
   localparam START_BIT = 0;
   localparam BIT_TICKS = CONFIG::SYSTEM_CLOCK / BAUD_RATE;
-  localparam DEBOUNCE_TICKS = BIT_TICKS / 100;
+  localparam DEBOUNCE_TICKS = 10;
 
   logic [$clog2(DEBOUNCE_TICKS)-1:0] debounce_count;
   logic [     $clog2(BIT_TICKS)-1:0] bit_count;
@@ -37,7 +37,7 @@ module UARTDriver
   } state_t;
   state_t state;
 
-  always @(posedge clock_50_000_000, negedge reset_l) begin
+  always_ff @(posedge clock_50_000_000, negedge reset_l) begin
     if (!reset_l) begin
       state          <= IDLE;
       buffer         <= '0;
@@ -54,7 +54,7 @@ module UARTDriver
             if (debounce_count >= DEBOUNCE_TICKS - 1) begin
               state          <= READING;
               buffer         <= '0;
-              index          <= BYTE_WIDTH - 1;
+              index          <= '0;
               bit_count      <= '0;
               debounce_count <= '0;
             end else begin
@@ -68,21 +68,16 @@ module UARTDriver
           if (bit_count >= BIT_TICKS - 1) begin
             bit_count     <= '0;
             buffer[index] <= uart_rx;
-            if (index == '0) state <= FINISH;
-            else index <= index - 1'b1;
+            if (index >= BYTE_WIDTH - 1) state <= FINISH;
+            else index <= index + 1'b1;
           end else begin
             bit_count <= bit_count + 1'b1;
           end
         end
         FINISH: begin
-          if (bit_count >= BIT_TICKS - 1) begin
-            state          <= IDLE;
-            data_in        <= buffer;
-            data_in_ready  <= 1'b1;
-            debounce_count <= '0;
-          end else begin
-            bit_count <= bit_count + 1'b1;
-          end
+          state   <= IDLE;
+          data_in <= buffer;
+          data_in_ready <= 1'b1;
         end
       endcase
   end
