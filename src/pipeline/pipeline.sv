@@ -35,7 +35,7 @@ module Pipeline (
   );
 
   // period
-  logic [AUDIO_BIT_WIDTH-1:0] period_table[(1<<LONG_PERCENT_WIDTH)-1:0];
+  logic [PERIOD_WIDTH-1:0] period_table[(1 << DATA_WIDTH)-1:0];
   initial begin
 `ifdef SIMULATION
     $readmemb("../../lut/period_table.vm", period_table);
@@ -43,7 +43,7 @@ module Pipeline (
     $readmemb("lut/period_table.vm", period_table);
 `endif
   end
-  assign period = period_table[note.note_number-NOTE_NUMBER_START];
+  assign period = period_table[note.note_number];
 
   // TODO: (hongrunz) add ADSR + velocity
   // TODO: (mychang) add unision detune
