@@ -21,6 +21,6 @@ module Mixer
 
   logic [AUDIO_BIT_WIDTH+CONFIG::PERCENT_WIDTH-1:0] high_precision;
   assign high_precision = sum[SUM_WIDTH-1-:AUDIO_BIT_WIDTH] * parameters.volume;
-  assign audio_out      = high_precision >> CONFIG::PERCENT_WIDTH;
+  assign audio_out = high_precision[AUDIO_BIT_WIDTH+CONFIG::PERCENT_WIDTH-1-:CONFIG::PERCENT_WIDTH];
 
 endmodule : Mixer
