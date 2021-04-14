@@ -7,7 +7,8 @@
 package PARAMETER;
 
   typedef enum logic [1:0] {
-    SINE     = '0,
+    NONE     = '0,
+    SINE,
     PULSE,
     TRIANGLE
   } wave_t;
@@ -53,8 +54,8 @@ package PARAMETER;
     percent_t sustain_level;
     logic [MIDI::DATA_WIDTH-1:0] release_time;
     logic [MIDI::DATA_WIDTH-1:0] tempo;
-    wave_t wave;
     percent_t duty_cycle;
+    wave_t wave;
     dispatcher_mode_t dispatcher_mode;
     arp_mode_t arp_mode;
     arp_rate_t arp_rate;
@@ -68,8 +69,8 @@ package PARAMETER;
     sustain_level: 'h7F,
     release_time: 'h0,
     tempo: 'h0,
-    wave: SINE,
     duty_cycle: 'h40,
+    wave: NONE,
     dispatcher_mode: POLYPHONY,
     arp_mode: ARP_MODE_UP,
     arp_rate: ARP_RATE_QUARTER,

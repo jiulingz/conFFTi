@@ -4,12 +4,13 @@
 `include "../includes/midi.vh"
 
 module ParameterControl (
-    input  logic                         clock_50_000_000,
-    input  logic                         reset_l,
-    input  MIDI::message_t               message,
-    input  logic                         message_ready,
-    output PARAMETER::parameter_t        parameters,
-    output PARAMETER::parameter_change_t parameter_changes
+    input  logic                                clock_50_000_000,
+    input  logic                                reset_l,
+    input  MIDI::message_t                      message,
+    input  logic                                message_ready,
+    input  logic                         [17:0] wave_switch,
+    output PARAMETER::parameter_t               parameters,
+    output PARAMETER::parameter_change_t        parameter_changes
 );
   import MIDI::*;
   import PARAMETER::*;
@@ -36,7 +37,7 @@ module ParameterControl (
             end
             DUTY_CYCLE: begin
               parameters.duty_cycle <= control_change.value;
-              parameter_changes        <= PARAM_DUTY_CYCLE;
+              parameter_changes     <= PARAM_DUTY_CYCLE;
             end
             ATTACK: begin
               parameters.attack_time <= control_change.value;
@@ -70,6 +71,12 @@ module ParameterControl (
         end
       endcase
     end
+    priority casez (wave_switch)
+      18'b??_????_????_????_???1:   parameters.wave = SINE;
+      18'b??_????_????_????_??1?:   parameters.wave = PULSE;
+      18'b??_????_????_????_?1??:   parameters.wave = TRIANGLE;
+      default: parameters.wave = NONE;
+    endcase
   end
 
 endmodule : ParameterControl

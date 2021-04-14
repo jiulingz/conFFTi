@@ -6,7 +6,6 @@
 module MIDIDecoder
   import MIDI::*;
 (
-    output logic     [                  17:0] LEDR,
     input  logic                              clock_50_000_000,
     input  logic                              reset_l,
     input  logic     [CONFIG::BYTE_WIDTH-1:0] data_in,

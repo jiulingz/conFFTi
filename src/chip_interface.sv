@@ -40,9 +40,11 @@ module ChipInterface (
   logic [                        5:0][3:0] midi_info;
   logic [                        5:0]      midi_info_en;
   logic [                        3:0]      pipeline_info;
+  logic [                       17:0]      wave_switch;
 
   assign clock_50_000_000 = CLOCK_50;
   assign reset_l          = KEY[0];
+  assign wave_switch      = SW;
   assign uart_rx          = GPIO[7];
   assign GPIO[0]          = i2s_bit_clock;
   assign GPIO[1]          = i2s_data;
@@ -70,6 +72,7 @@ module ChipInterface (
       .reset_l,
       .data_in,
       .data_in_ready,
+      .wave_switch,
       .audio_out,
       // debug display
       .midi_info,

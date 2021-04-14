@@ -8,6 +8,7 @@ module conFFTi (
     input  logic                                    reset_l,
     input  logic [     CONFIG::BYTE_WIDTH-1:0]      data_in,
     input  logic                                    data_in_ready,
+    input  logic [                       17:0]      wave_switch,
     output logic [CONFIG::AUDIO_BIT_WIDTH-1:0]      audio_out,
     // debug display
     output logic [                        5:0][3:0] midi_info,
@@ -33,6 +34,7 @@ module conFFTi (
       .reset_l,
       .message,
       .message_ready,
+      .wave_switch,
       .parameters,
       .parameter_changes
   );

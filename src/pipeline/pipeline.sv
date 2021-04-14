@@ -53,6 +53,7 @@ module Pipeline (
     if (note.status == OFF) audio = '0;
     else
       case (parameters.wave)
+        NONE:     audio = '0;
         SINE:     audio = sine;
         PULSE:    audio = pulse;
         TRIANGLE: audio = triangle;
