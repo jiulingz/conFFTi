@@ -34,6 +34,10 @@ module ParameterControl (
               parameters.unison_detune <= control_change.value;
               parameter_changes        <= PARAM_UNISON_DETUNE;
             end
+            DUTY_CYCLE: begin
+              parameters.duty_cycle <= control_change.value;
+              parameter_changes        <= PARAM_DUTY_CYCLE;
+            end
             ATTACK: begin
               parameters.attack_time <= control_change.value;
               parameter_changes      <= PARAM_ATTACK_TIME;

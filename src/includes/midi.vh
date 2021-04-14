@@ -42,13 +42,14 @@ package MIDI;
   } note_change_t;
 
   typedef enum logic [DATA_WIDTH-1:0] {
-    TEMPO   = 7'd21,
-    UNISON  = 7'd22,
-    ATTACK  = 7'd24,
-    DECAY   = 7'd25,
-    SUSTAIN = 7'd26,
-    RELEASE = 7'd27,
-    VOLUME  = 7'd28
+    TEMPO      = 7'd21,
+    UNISON     = 7'd22,
+    DUTY_CYCLE = 7'd23,
+    ATTACK     = 7'd24,
+    DECAY      = 7'd25,
+    SUSTAIN    = 7'd26,
+    RELEASE    = 7'd27,
+    VOLUME     = 7'd28
   } controller_t;
   typedef logic [DATA_WIDTH-1:0] value_t;
   typedef struct packed {
