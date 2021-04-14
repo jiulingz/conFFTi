@@ -86,12 +86,31 @@ module ChipInterface (
       .i2s_data
   );
 
-  assign LEDG[3:0] = pipeline_info;
-
   SevenSegmentDriver seven_segment_driver (
       .value  ({8'b0, midi_info}),
       .en     ({2'b00, midi_info_en}),
       .segment({HEX7, HEX6, HEX5, HEX4, HEX3, HEX2, HEX1, HEX0})
   );
+
+  assign LEDG[3:0] = pipeline_info;
+
+  assign LEDR[0]   = audio_out > 24'd0;
+  assign LEDR[1]   = audio_out > 24'd932067;
+  assign LEDR[2]   = audio_out > 24'd1864135;
+  assign LEDR[3]   = audio_out > 24'd2796202;
+  assign LEDR[4]   = audio_out > 24'd3728270;
+  assign LEDR[5]   = audio_out > 24'd4660337;
+  assign LEDR[6]   = audio_out > 24'd5592405;
+  assign LEDR[7]   = audio_out > 24'd6524472;
+  assign LEDR[8]   = audio_out > 24'd7456540;
+  assign LEDR[9]   = audio_out > 24'd8388608;
+  assign LEDR[10]  = audio_out > 24'd9320675;
+  assign LEDR[11]  = audio_out > 24'd10252743;
+  assign LEDR[12]  = audio_out > 24'd11184810;
+  assign LEDR[13]  = audio_out > 24'd12116878;
+  assign LEDR[14]  = audio_out > 24'd13048945;
+  assign LEDR[15]  = audio_out > 24'd13981013;
+  assign LEDR[16]  = audio_out > 24'd14913080;
+  assign LEDR[17]  = audio_out > 24'd15845148;
 
 endmodule : ChipInterface
