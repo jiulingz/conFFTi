@@ -22,7 +22,7 @@ module UARTDriver
 
   localparam START_BIT = 0;
   localparam BIT_TICKS = CONFIG::SYSTEM_CLOCK / BAUD_RATE;
-  localparam DEBOUNCE_TICKS = 10;
+  localparam DEBOUNCE_TICKS = BIT_TICKS / 2;
 
   logic [$clog2(DEBOUNCE_TICKS)-1:0] debounce_count;
   logic [     $clog2(BIT_TICKS)-1:0] bit_count;
