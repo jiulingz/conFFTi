@@ -20,14 +20,20 @@ module Dispatcher
   note_change_t note;
   logic         note_ready;
   always_comb begin
-    note_ready = '0;
-    note       = '0;
-    if (message.message_type == NOTE_ON || message.message_type == NOTE_OFF) begin
-      note_ready       = message_ready;
-      note.status      = message.message_type == NOTE_ON ? ON : OFF;
-      note.note_number = message.data_byte1;
-      note.velocity    = message.data_byte2;
-    end
+    unique case (message.message_type)
+      NOTE_ON: begin
+        note_ready = message_ready;
+        note = '{status: ON, note_number: message.data_byte1, velocity   : message.data_byte2};
+      end
+      NOTE_OFF: begin
+        note_ready = message_ready;
+        note = '{status: OFF, note_number: message.data_byte1, velocity   : message.data_byte2};
+      end
+      default: begin
+        note_ready = '0;
+        note       = '0;
+      end
+    endcase
   end
 
   Polyphony #(

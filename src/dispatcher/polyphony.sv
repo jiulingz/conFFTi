@@ -35,7 +35,7 @@ module Polyphony
       .ELEMENT_COUNT(PIPELINE_COUNT)
   ) status_search (
       .needle  (OFF),
-`ifdef SIMULATION // To pacify ModelSim
+`ifdef SIMULATION  // To pacify ModelSim
       .heystack({pipeline_status}),
 `else
       .heystack(pipeline_status),
@@ -70,15 +70,15 @@ module Polyphony
             pipeline_status[index_available]       <= ON;
             pipeline_note_numbers[index_available] <= note.note_number;
             pipeline_velocities[index_available]   <= note.velocity;
-            pipeline_notes_ready                   <= '1;
+            pipeline_notes_ready[index_available]  <= '1;
           end
         end
         OFF: begin
           if (is_playing) begin
             pipeline_status[index_playing]       <= OFF;
-            pipeline_note_numbers[index_playing] <= '0;
-            pipeline_velocities[index_playing]   <= '0;
-            pipeline_notes_ready                 <= '1;
+            pipeline_note_numbers[index_playing] <= note.note_number;
+            pipeline_velocities[index_playing]   <= note.velocity;
+            pipeline_notes_ready[index_playing]  <= '1;
           end
         end
       endcase

@@ -39,6 +39,7 @@ module ChipInterface (
   // debug display
   logic [                        5:0][3:0] midi_info;
   logic [                        5:0]      midi_info_en;
+  logic [                        3:0]      pipeline_info;
 
   assign clock_50_000_000 = CLOCK_50;
   assign reset_l          = KEY[0];
@@ -72,7 +73,8 @@ module ChipInterface (
       .audio_out,
       // debug display
       .midi_info,
-      .midi_info_en
+      .midi_info_en,
+      .pipeline_info
   );
 
   DACDriver dac_driver (
@@ -83,6 +85,8 @@ module ChipInterface (
       .i2s_left_right_clock,
       .i2s_data
   );
+
+  assign LEDG[3:0] = pipeline_info;
 
   SevenSegmentDriver seven_segment_driver (
       .value  ({8'b0, midi_info}),

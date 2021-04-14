@@ -11,7 +11,8 @@ module conFFTi (
     output logic [CONFIG::AUDIO_BIT_WIDTH-1:0]      audio_out,
     // debug display
     output logic [                        5:0][3:0] midi_info,
-    output logic [                        5:0]      midi_info_en
+    output logic [                        5:0]      midi_info_en,
+    output logic [                        3:0]      pipeline_info
 );
 
   MIDI::message_t message;
@@ -86,6 +87,17 @@ module conFFTi (
       midi_info[3:2]    <= message.data_byte1;
       midi_info_en[1:0] <= '1;
       midi_info[1:0]    <= message.data_byte2;
+    end
+  end
+
+  always_ff @(posedge clock_50_000_000, negedge reset_l) begin
+    if (!reset_l) begin
+      pipeline_info <= '0;
+    end else begin
+      if (pipeline_notes_ready[0]) pipeline_info[0] <= pipeline_notes[0].status;
+      if (pipeline_notes_ready[1]) pipeline_info[1] <= pipeline_notes[1].status;
+      if (pipeline_notes_ready[2]) pipeline_info[2] <= pipeline_notes[2].status;
+      if (pipeline_notes_ready[3]) pipeline_info[3] <= pipeline_notes[3].status;
     end
   end
 
