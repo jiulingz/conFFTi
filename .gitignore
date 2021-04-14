@@ -48,5 +48,6 @@
 # Allow for memory files
 !*.vm
 
-# Allow for project assignment files
+# Allow for project assignment and timing files
 !*.qsf
+!*.sdc
