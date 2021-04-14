@@ -14,9 +14,14 @@ package MIDI;
   } byte_type_t;
 
   typedef enum logic [3:0] {
-    NOTE_OFF       = 4'h8,
-    NOTE_ON        = 4'h9,
-    CONTROL_CHANGE = 4'hB
+    NOTE_OFF            = 4'h8,
+    NOTE_ON             = 4'h9,
+    POLYPHONIC_PRESSURE = 4'hA,
+    CONTROL_CHANGE      = 4'hB,
+    PROGRAM_CHANGE      = 4'hC,
+    CHANNEL_PRESSURE    = 4'hD,
+    PITCH_BEND          = 4'hE,
+    SYSTEM              = 4'hF
   } message_type_t;
   typedef struct packed {
     message_type_t message_type;

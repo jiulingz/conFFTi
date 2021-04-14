@@ -6,6 +6,7 @@
 module MIDIDecoder
   import MIDI::*;
 (
+    output logic     [                  17:0] LEDR,
     input  logic                              clock_50_000_000,
     input  logic                              reset_l,
     input  logic     [CONFIG::BYTE_WIDTH-1:0] data_in,
@@ -21,7 +22,7 @@ module MIDIDecoder
   assign message_type = message_type_t'(data_in[7:4]);
   assign data_byte    = data_in[6:0];
 
-  typedef enum logic [2:0] {
+  typedef enum logic [1:0] {
     STATUS_BYTE,
     DATA_BYTE_1,
     DATA_BYTE_2,
@@ -48,15 +49,14 @@ module MIDIDecoder
                     state               <= DATA_BYTE_1;
                     buffer.message_type <= message_type;
                   end
-                  default: begin  // invalid byte
+                  default: begin  // unsupported status
                     state  <= STATUS_BYTE;
                     buffer <= '0;
                   end
                 endcase
               end
               default: begin  // invalid byte
-                state  <= STATUS_BYTE;
-                buffer <= '0;
+                state <= state;
               end
             endcase
           else state <= state;
@@ -70,15 +70,14 @@ module MIDIDecoder
                     state             <= DATA_BYTE_2;
                     buffer.data_byte1 <= data_byte;
                   end
-                  default: begin  // invalid byte
+                  default: begin  // unsupported status
                     state  <= STATUS_BYTE;
                     buffer <= '0;
                   end
                 endcase
               end
               default: begin  // invalid byte
-                state  <= STATUS_BYTE;
-                buffer <= '0;
+                state <= state;
               end
             endcase
           else state <= state;
@@ -104,15 +103,14 @@ module MIDIDecoder
                     state             <= FINISH;
                     buffer.data_byte2 <= data_byte;
                   end
-                  default: begin  // invalid byte
+                  default: begin  // unsupported status
                     state  <= STATUS_BYTE;
                     buffer <= '0;
                   end
                 endcase
               end
               default: begin  // invalid byte
-                state  <= STATUS_BYTE;
-                buffer <= '0;
+                state <= state;
               end
             endcase
           else state <= state;
