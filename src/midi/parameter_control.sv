@@ -20,7 +20,7 @@ module ParameterControl (
   // TODO: (jiulingz) add arpegiator parameter
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
     if (!reset_l) begin
-      parameters        <= '0;
+      parameters        <= DEFAULT_PARAMETERS;
       parameter_changes <= PARAM_NONE;
     end else if (message_ready) begin
       unique case (message.message_type)

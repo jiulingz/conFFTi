@@ -60,6 +60,21 @@ package PARAMETER;
     arp_rate_t arp_rate;
     arp_rhythm_t arp_rhythm;
   } parameter_t;
+  parameter parameter_t DEFAULT_PARAMETERS = '{
+    volume: 'h40,
+    unison_detune: 'h0,
+    attack_time: 'h0,
+    decay_time: 'h0,
+    sustain_level: 'h7F,
+    release_time: 'h0,
+    tempo: 'h0,
+    wave: SINE,
+    duty_cycle: 'h40,
+    dispatcher_mode: POLYPHONY,
+    arp_mode: ARP_MODE_UP,
+    arp_rate: ARP_RATE_QUARTER,
+    arp_rhythm: ARP_RHYTHM_O
+  };
   typedef enum logic [3:0] {
     PARAM_NONE            = '0,
     PARAM_VOLUME,
