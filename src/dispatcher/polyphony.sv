@@ -66,7 +66,7 @@ module Polyphony
     end else if (note_ready) begin
       unique case (note.status)
         ON: begin
-          if (!is_playing && is_available) begin
+          if ((!is_playing || pipeline_status[index_playing] == OFF) && is_available) begin
             pipeline_status[index_available]       <= ON;
             pipeline_note_numbers[index_available] <= note.note_number;
             pipeline_velocities[index_available]   <= note.velocity;
