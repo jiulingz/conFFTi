@@ -1,12 +1,25 @@
 # Exclude all files, then include in only the required ones, or by hand
 *
+
+# Allow scripts
 !scripts/
 !scripts/*/
-!src/
-!src/*/
 
-!src/wvfm_osc/lut
-!src/wvfm_osc/sv
+# Allow source directory
+!src/
+!src/device/
+!src/device/submodules/
+!src/includes/
+!src/midi/
+!src/dispatcher/
+!src/pipeline/
+!src/mixer/
+
+!src/*/lut/
+
+!src/*/tests/
+!src/*/tests/simulation/
+!src/*/tests/synthesis/
 
 # Allow for gitignore files
 !.gitignore
@@ -14,14 +27,27 @@
 # Allow for readme files
 !/README.md
 
+# Allow for Makefile
+!Makefile
+!*.mk
+
 # Allow for Verilog and System Verilog files
 !*.sv
 !*.v
 !*.vh
+
+# Allow for Altera IP files
+!*.qip
 
 # Allow for Matlab files
 !*.m
 
 # Allow for C++ and hex files
 !*.cpp
-!*.hex
+
+# Allow for memory files
+!*.vm
+
+# Allow for project assignment and timing files
+!*.qsf
+!*.sdc
