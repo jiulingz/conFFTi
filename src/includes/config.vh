@@ -21,6 +21,8 @@ package CONFIG;
   parameter AUDIO_GENERATION_FREQUENCY = 50000;  // 50 KHz
   parameter PERIOD_WIDTH = 11; // 21 = $clog2(50,000 / 27.5), 27.5 = A0 frequency
 
+  parameter ENVELOPE_COUNTER_WIDTH = 14; // $clog2(50,000 * 0.5), # of ticks in 0.5 second
+
 endpackage : CONFIG
 
 `endif  /* CONFIG_VH_ */
