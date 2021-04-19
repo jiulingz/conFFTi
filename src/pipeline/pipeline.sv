@@ -23,6 +23,7 @@ module Pipeline (
   logic [AUDIO_BIT_WIDTH-1:0] sine;
   logic [AUDIO_BIT_WIDTH-1:0] pulse;
   logic [AUDIO_BIT_WIDTH-1:0] triangle;
+
   Oscillator oscillator (
       .clock_50_000_000,
       .reset_l,
@@ -45,7 +46,6 @@ module Pipeline (
   end
   assign period = period_table[note.note_number];
 
-  // TODO: (hongrunz) add ADSR + velocity
   logic [AUDIO_BIT_WIDTH-1:0] envelope;
   Envelope envelope (
     .clock_50_000_000,
@@ -59,14 +59,17 @@ module Pipeline (
   // TODO: (mychang) add unision detune
 
   // output
+  logic [AUDIO_BIT_WIDTH-1:0] volume_mask;
+  assign volume_mask = parameters.volume << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);
+  
   always_comb begin
     if (note.status == OFF) audio = '0;
     else
       case (parameters.wave)
         NONE:     audio = '0;
-        SINE:     audio = sine;
-        PULSE:    audio = pulse;
-        TRIANGLE: audio = triangle;
+        SINE:     audio = sine * envelope * volume_mask;
+        PULSE:    audio = pulse * envelope * volume_mask;
+        TRIANGLE: audio = triangle * envelope * volume_mask;
       endcase
   end
 

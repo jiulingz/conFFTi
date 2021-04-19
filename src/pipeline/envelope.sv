@@ -14,58 +14,98 @@ module Envelope (
 );
 
   import ENVELOPE::envelope_state_t;
-  import CONFIG::ENVELOPE_COUNTER_WIDTH;
-  import CONFIG::SYSTEM_CLOCK;
+  import CONFIG::*;
 
   logic [ENVELOPE_COUNTER_WIDTH-1:0] count;
   logic [ENVELOPE_COUNTER_WIDTH-1:0] target;
+  logic [ENVELOPE_COUNTER_WIDTH-1:0] divisor;
+  logic [ENVELOPE_COUNTER_WIDTH-1:0] quotient;
 
-  // logic [] attack_width;
-  // logic [] delay_width;
-  // logic [] release_width;
+`ifdef SIMULATION
+  localparam GENERATION_TICKS = 1;
+`else
+  localparam GENERATION_TICKS = SYSTEM_CLOCK / AUDIO_GENERATION_FREQUENCY;
+`endif
+  logic [      $clog2(GENERATION_TICKS)-1:0] generation_count;
 
-  assign target = SYSTEM_CLOCK / 2;
-  // assign attack_width = ;
-  // assign delay_width = ;
-  // assign release_width = ;
-
+  logic [CONFIG::ENVELOPE_COUNTER_WIDTH-1:0] attack_target;
+  logic [CONFIG::ENVELOPE_COUNTER_WIDTH-1:0] delay_target;
+  logic [CONFIG::ENVELOPE_COUNTER_WIDTH-1:0] release_target;
   envelope_state_t state;
 
+  assign attack_target = CONFIG::MAX_TARGET_TICKS * parameters.attack_time;
+  assign delay_target = CONFIG::MAX_TARGET_TICKS * parameters.delay_time;
+  assign release_target = CONFIG::MAX_TARGET_TICKS * parameters.release_time;
+
+  logic [       CONFIG::AUDIO_BIT_WIDTH-1:0] sustain_height;
+  logic [       CONFIG::AUDIO_BIT_WIDTH-1:0] release_height;
+ 
+  logic [ENVELOPE_COUNTER_WIDTH-1:0] division_table[(1<<ENVELOPE_COUNTER_WIDTH)-1:0];
+  initial begin
+`ifdef SIMULATION
+    $readmemb("../../lut/adsr_division_table.vm", division_table);
+`else
+    $readmemb("lut/adsr_division_table.vm", division_table);
+`endif
+  end
+
+  assign quotient = count * division_table[divisor];
+  assign sustain_height = parameter.sustain_level << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);
+
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
+    envelope_end <= '0;
+    divisor <= '0;
     if (!reset_l) begin
       state <= ENVELOPE::IDLE;
       count <= '0;
+      generation_count <= '0;
     end else if (note_on) begin
       state <= ENVELOPE::ATTACK;
       count <= '0;
+      generation_count <= '0;
     end else if (note_off) begin
       state <= ENVELOPE::RELEASE;
       count <= '0;
-    end else
+      generation_count <= '0;
+    end else if (generation_count >= GENERATION_TICKS - 1) begin
+      generation_count <= '0;
+      count <= count + 1;
       unique case (state)
         ENVELOPE::ATTACK: begin
-          count <= count + 1;
-          if (count == attack_width) begin
+          divisor <= attack_target;
+          if (count >= attack_target) begin
             count <= '0;
-            state <= ENVELOP::DELAY;
+            state <= ENVELOPE::DELAY;
+            envelope <= quotient << (AUDIO_BIT_WIDTH - ENVELOPE_COUNTER_WIDTH);
+            release_height <= envelope;
           end
         end
         ENVELOPE::DELAY: begin
-          count <= count + 1;
-          if (count == delay_width) begin
+          divisor <= delay_target;
+          if (count >= delay_target) begin
             count <= '0;
-            state <= ENVELOP::SUSTAIN;
+            state <= ENVELOPE::SUSTAIN;
+            envelope <= ~quotient * (ENVELOPE_CEILING - sustain_height) << (AUDIO_BIT_WIDTH - ENVELOPE_COUNTER_WIDTH) + sustain_height;
+            release_height <= envelope;
           end
         end
-        ENVELOPE::RELEASE: begin
-          count <= count + 1;
-          if (count == release_width) begin
+        ENVELOPE::SUSTAIN: begin
+          envelope <= sustain_height;
+          release_height <= envelope;
+        end
+        ENVELOPE::RELEASE: 
+          divisor <= release_target;
+          if (count >= release_target) begin
             count <= '0;
             envelope_end <= '1;
-            state <= ENVELOP::IDLE;
+            state <= ENVELOPE::IDLE;
+            envelope <= ~quotient * release_height << (AUDIO_BIT_WIDTH - ENVELOPE_COUNTER_WIDTH);
           end
         end
       endcase
+    end else begin
+      generation_count <=  generation_count + 1'b1;
+    end
   end
 
 endmodule : Envelope
