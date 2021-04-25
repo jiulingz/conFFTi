@@ -21,7 +21,7 @@ package CONFIG;
   parameter AUDIO_GENERATION_FREQUENCY = 50000;  // 50 KHz
   parameter PERIOD_WIDTH = 11; // 21 = $clog2(50,000 / 27.5), 27.5 = A0 frequency
 
-  parameter MAX_TARGET_TICKS = 50000;
+  parameter MAX_TARGET_TICKS = 50000; // 1s => 50M system ticks => 50,000 audio clock ticks
   parameter ENVELOPE_COUNTER_WIDTH = 16; // $clog2(50,000)
   parameter ENVELOPE_CEILING = 16'hffff;
   
