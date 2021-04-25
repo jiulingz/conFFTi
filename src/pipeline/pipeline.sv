@@ -59,17 +59,17 @@ module Pipeline (
   // TODO: (mychang) add unision detune
 
   // output
-  logic [AUDIO_BIT_WIDTH-1:0] volume_mask;
-  assign volume_mask = parameters.volume << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);
-  
+  logic [AUDIO_BIT_WIDTH-1:0] velocity_mask;
+  assign velocity_mask = note.velocity << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);
+
   always_comb begin
     if (note.status == OFF) audio = '0;
     else
       case (parameters.wave)
         NONE:     audio = '0;
-        SINE:     audio = sine * envelope * volume_mask;
-        PULSE:    audio = pulse * envelope * volume_mask;
-        TRIANGLE: audio = triangle * envelope * volume_mask;
+        SINE:     audio = ((sine * envelope) << (AUDIO_BIT_WIDTH-1) * velocity_mask << (AUDIO_BIT_WIDTH-1);
+        PULSE:    audio = ((pulse * envelope) << (AUDIO_BIT_WIDTH-1) * velocity_mask << (AUDIO_BIT_WIDTH-1);
+        TRIANGLE: audio = ((triangle * envelope) << (AUDIO_BIT_WIDTH-1) * velocity_mask << (AUDIO_BIT_WIDTH-1);
       endcase
   end
 

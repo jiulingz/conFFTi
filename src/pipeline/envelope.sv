@@ -49,7 +49,10 @@ module Envelope (
 `endif
   end
 
-  assign quotient = count * division_table[divisor];
+  logic [PERIOD_WIDTH+PERIOD_WIDTH-1:0] high_precision;  
+  assign high_precision = count * division_table[divisor];
+  assign quotient       = high_precision[PERIOD_WIDTH-1-:LONG_PERCENT_WIDTH];
+  
   assign sustain_height = parameter.sustain_level << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);
 
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
