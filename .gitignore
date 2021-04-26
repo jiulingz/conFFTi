@@ -49,5 +49,6 @@
 !*.vm
 
 # Allow for project assignment and timing files
+!*.qpf
 !*.qsf
 !*.sdc
