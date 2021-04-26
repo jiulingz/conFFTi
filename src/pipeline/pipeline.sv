@@ -58,19 +58,21 @@ module Pipeline (
   );
   // TODO: (mychang) add unision detune
 
-  // output
-  logic [AUDIO_BIT_WIDTH-1:0] velocity_mask;
-  assign velocity_mask = note.velocity << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);
+  // temp values
+  logic [AUDIO_BIT_WIDTH-1:0] audio_before_envelope;
+  logic [AUDIO_BIT_WIDTH+AUDIO_BIT_WIDTH-1:0] audio_w_envelope;
 
   always_comb begin
     if (note.status == OFF) audio = '0;
     else
       case (parameters.wave)
-        NONE:     audio = '0;
-        SINE:     audio = ((sine * envelope) << (AUDIO_BIT_WIDTH-1) * velocity_mask << (AUDIO_BIT_WIDTH-1);
-        PULSE:    audio = ((pulse * envelope) << (AUDIO_BIT_WIDTH-1) * velocity_mask << (AUDIO_BIT_WIDTH-1);
-        TRIANGLE: audio = ((triangle * envelope) << (AUDIO_BIT_WIDTH-1) * velocity_mask << (AUDIO_BIT_WIDTH-1);
+        NONE:     audio_before_envelope = '0;
+        SINE:     audio_before_envelope = sine;
+        PULSE:    audio_before_envelope = pulse;
+        TRIANGLE: audio_before_envelope = triangle;
       endcase
+      audio_w_envelope = (audio_before_envelope * envelope) >> AUDIO_BIT_WIDTH;
+      audio = (audio_w_envelope[AUDIO_BIT_WIDTH-1:0] >> PERCENT_WIDTH) * note.velocity;
   end
 
 endmodule : Pipeline
