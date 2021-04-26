@@ -2,6 +2,7 @@
 
 `include "../includes/config.vh"
 `include "../includes/oscillator.vh"
+`include "../includes/envelope.vh"
 
 module Envelope (
     input  logic                                                   clock_50_000_000,
@@ -43,13 +44,14 @@ module Envelope (
   logic [ENVELOPE_COUNTER_WIDTH-1:0] division_table[(1<<ENVELOPE_COUNTER_WIDTH)-1:0];
 
   initial begin
-    $readmemb("../../lut/adsr_division_table.vm", division_table);
+    $readmemb("lut/adsr_division_table.vm", division_table);
   end
 
   assign sustain_height = parameters.sustain_level << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);
+  assign envelope_end = '0;
 
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
-    envelope_end <= '0;
+    // envelope_end <= '0;
     if (!reset_l) begin
       state <= ENVELOPE::IDLE;
       count <= '0;
@@ -103,7 +105,7 @@ module Envelope (
           envelope <= (release_target - count) * quotient;
           if (count >= release_target) begin
             count <= '0;
-            envelope_end <= '1;
+            // envelope_end <= '1;
             state <= ENVELOPE::IDLE;
           end
         end
