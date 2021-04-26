@@ -73,6 +73,7 @@ module Polyphony
             pipeline_notes_ready[index_available]  <= '1;
           end
         end
+        // TODO(jiulingz): please change OFF status indicator to envelope_idle in pipeline.sv
         OFF: begin
           if (is_playing) begin
             pipeline_status[index_playing]       <= OFF;

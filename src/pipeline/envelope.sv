@@ -22,7 +22,6 @@ module Envelope (
   logic [ENVELOPE_COUNTER_WIDTH-1:0] target;
   logic [ENVELOPE_COUNTER_WIDTH-1:0] divisor;
   logic [ENVELOPE_COUNTER_WIDTH+ENVELOPE_COUNTER_WIDTH-1:0] step;
-  logic [ENVELOPE_COUNTER_WIDTH-1:0] top;
   logic [ENVELOPE_COUNTER_WIDTH+ENVELOPE_COUNTER_WIDTH-1:0] quotient;
 
   localparam GENERATION_TICKS = SYSTEM_CLOCK / AUDIO_GENERATION_FREQUENCY;
@@ -48,7 +47,7 @@ module Envelope (
   end
 
   assign sustain_height = parameters.sustain_level << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);
-  assign envelope_end = '0;
+  assign envelope_end = (state == ENVELOPE::IDLE);
 
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
     // envelope_end <= '0;
@@ -77,7 +76,6 @@ module Envelope (
           quotient <= count * division_table[divisor];
           envelope <= quotient << ENVELOPE_PUSH_BITS;
           release_height <= envelope;
-          top <= release_height;
           if (count >= attack_target) begin
             count <= '0;
             state <= ENVELOPE::DECAY;

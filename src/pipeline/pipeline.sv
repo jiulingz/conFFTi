@@ -64,7 +64,7 @@ module Pipeline (
   logic [AUDIO_BIT_WIDTH+AUDIO_BIT_WIDTH-1:0] audio_w_envelope;
 
   always_ff @(posedge clock_50_000_000) begin
-    if (note.status == OFF) begin
+    if (envelope_end) begin
       audio <= '0;
     end else begin
       unique case (parameters.wave)
