@@ -20,6 +20,9 @@ package CONFIG;
 
   parameter AUDIO_GENERATION_FREQUENCY = 50000;  // 50 KHz
   parameter PERIOD_WIDTH = 11; // 21 = $clog2(50,000 / 27.5), 27.5 = A0 frequency
+  
+  parameter DETUNE_PERIOD_SCALE1 = 2;
+  parameter DETUNE_PERIOD_SCALE2 = 4;
 
 endpackage : CONFIG
 

@@ -20,9 +20,10 @@ module Pipeline (
   // oscillator
   logic [   PERIOD_WIDTH-1:0] period;
   logic [   PERIOD_WIDTH-1:0] duty_cycle;
-  logic [AUDIO_BIT_WIDTH-1:0] sine;
-  logic [AUDIO_BIT_WIDTH-1:0] pulse;
-  logic [AUDIO_BIT_WIDTH-1:0] triangle;
+  logic [AUDIO_BIT_WIDTH-1:0] detune;
+  logic [AUDIO_BIT_WIDTH-1:0] sine, sine1, sine2, sine3, sine4;
+  logic [AUDIO_BIT_WIDTH-1:0] pulse, pulse1, pulse2, pulse3, pulse4;
+  logic [AUDIO_BIT_WIDTH-1:0] triangle, triangle1, triangle2, triangle3, triangle4;
   Oscillator oscillator (
       .clock_50_000_000,
       .reset_l,
@@ -32,6 +33,47 @@ module Pipeline (
       .sine,
       .pulse,
       .triangle
+  );
+  // oscillators below are for unison
+  Oscillator detune1 (
+      .clock_50_000_000,
+      .reset_l,
+      .clear     (note_ready && note.status == ON),
+      .period(period - ((period >> DETUNE_PERIOD_SCALE1) * parameters.unison_detune >> 10)),
+      .duty_cycle(parameters.duty_cycle),
+      .sine(sine1),
+      .pulse(pulse1),
+      .triangle(triangle1)
+  );
+  Oscillator detune2 (
+      .clock_50_000_000,
+      .reset_l,
+      .clear     (note_ready && note.status == ON),
+      .period(period - ((period >> DETUNE_PERIOD_SCALE2) * parameters.unison_detune >> 10)),
+      .duty_cycle(parameters.duty_cycle),
+      .sine(sine2),
+      .pulse(pulse2),
+      .triangle(triangle2)
+  );
+  Oscillator detune3 (
+      .clock_50_000_000,
+      .reset_l,
+      .clear     (note_ready && note.status == ON),
+      .period(period + ((period >> DETUNE_PERIOD_SCALE1) * parameters.unison_detune >> 10)),
+      .duty_cycle(parameters.duty_cycle),
+      .sine(sine3),
+      .pulse(pulse3),
+      .triangle(triangle3)
+  );
+  Oscillator detune4 (
+      .clock_50_000_000,
+      .reset_l,
+      .clear     (note_ready && note.status == ON),
+      .period(period + ((period >> DETUNE_PERIOD_SCALE2) * parameters.unison_detune >> 10)),
+      .duty_cycle(parameters.duty_cycle),
+      .sine(sine4),
+      .pulse(pulse4),
+      .triangle(triangle4)
   );
 
   // period
@@ -50,13 +92,28 @@ module Pipeline (
 
   // output
   always_comb begin
-    if (note.status == OFF) audio = '0;
+    if (note.status == OFF) begin
+	     detune = '0;
+		  audio = '0;
+    end
     else
       case (parameters.wave)
-        NONE:     audio = '0;
-        SINE:     audio = sine;
-        PULSE:    audio = pulse;
-        TRIANGLE: audio = triangle;
+        NONE: begin
+		     detune = '0;
+    		  audio = '0;
+		  end
+        SINE: begin
+		     detune = (sine1 + sine2 + sine3 + sine4) >> 2;
+   		  audio = (sine + detune) >> 1;
+		  end
+        PULSE: begin
+		     detune = (pulse1 + pulse2 + pulse3 + pulse4) >> 2;
+    		  audio = (pulse + detune) >> 1;
+		  end
+        TRIANGLE: begin
+		     detune = (triangle1 + triangle2 + triangle3 + triangle4) >> 2;
+		     audio = (triangle + detune) >> 1;
+		  end
       endcase
   end
 
