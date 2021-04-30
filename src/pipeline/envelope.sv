@@ -10,8 +10,8 @@ module Envelope (
     input  PARAMETER::parameter_t                                  parameters,
     input  logic                                                   note_on,
     input  logic                                                   note_off,
-    output logic                  [CONFIG::AUDIO_BIT_WIDTH-1:0]    envelope
-    // output logic                                                   envelope_end
+    output logic                  [CONFIG::AUDIO_BIT_WIDTH-1:0]    envelope,
+    output logic                                                   envelope_end
 );
 
   import PARAMETER::*;
@@ -43,18 +43,13 @@ module Envelope (
   logic [ENVELOPE_COUNTER_WIDTH-1:0] division_table[(1<<ENVELOPE_COUNTER_WIDTH)-1:0];
 
   initial begin
-<<<<<<< HEAD
     $readmemb("lut/division_table.vm", division_table);
-=======
-    $readmemb("lut/adsr_division_table.vm", division_table);
->>>>>>> adsr
   end
 
   assign sustain_height = parameters.sustain_level << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);
   assign envelope_end = (state == ENVELOPE::IDLE);
 
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
-    // envelope_end <= '0;
     if (!reset_l) begin
       state <= ENVELOPE::IDLE;
       count <= '0;
@@ -107,7 +102,6 @@ module Envelope (
           envelope <= (release_target - count) * quotient;
           if (count >= release_target) begin
             count <= '0;
-            // envelope_end <= '1;
             state <= ENVELOPE::IDLE;
           end
         end

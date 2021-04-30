@@ -18,10 +18,10 @@ package CONFIG;
   parameter LONG_PERCENT_WIDTH = 8;
   typedef logic [LONG_PERCENT_WIDTH-1:0] long_percent_t;
 
-  parameter AUDIO_GENERATION_FREQUENCY = 400000;  // 50 KHz * 8
+  parameter AUDIO_GENERATION_FREQUENCY = 400000;
   parameter PERIOD_WIDTH = 16; // 21 = $clog2(50,000 / 27.5), 27.5 = A0 frequency
 
-  parameter MAX_TARGET_TICKS = 6250; // 1s => 50M system ticks => 50,000 audio clock ticks
+  parameter MAX_TARGET_TICKS = 400000; // 1s => 400000 audio clock clicks
   parameter ENVELOPE_COUNTER_WIDTH = 16; // $clog2(50,000)
   parameter ENVELOPE_PUSH_BITS = 8;
   parameter ENVELOPE_CEILING = 16'hffff;
