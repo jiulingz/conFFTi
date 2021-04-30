@@ -47,7 +47,11 @@ module Pipeline (
   assign period = period_table[note.note_number];
 
   logic [AUDIO_BIT_WIDTH-1:0] envelope;
+<<<<<<< HEAD
   // logic envelope_end;
+=======
+  logic envelope_end;
+>>>>>>> adsr
   Envelope env (
     .clock_50_000_000,
     .reset_l,
@@ -64,18 +68,14 @@ module Pipeline (
   logic [AUDIO_BIT_WIDTH+AUDIO_BIT_WIDTH-1:0] audio_w_envelope;
   
   always_ff @(posedge clock_50_000_000) begin
-    if (note.status == OFF) begin
-      audio <= '0;
-    end else begin
-      unique case (parameters.wave)
-        NONE:     audio_before_envelope <= '0;
-        SINE:     audio_before_envelope <= sine;
-        PULSE:    audio_before_envelope <= pulse;
-        TRIANGLE: audio_before_envelope <= triangle;
-      endcase
-      audio_w_envelope <= (audio_before_envelope * envelope) >> AUDIO_BIT_WIDTH;
-      audio <= (audio_w_envelope[AUDIO_BIT_WIDTH-1:0] >> PERCENT_WIDTH) * note.velocity;
-    end
+    unique case (parameters.wave)
+      NONE:     audio_before_envelope <= '0;
+      SINE:     audio_before_envelope <= sine;
+      PULSE:    audio_before_envelope <= pulse;
+      TRIANGLE: audio_before_envelope <= triangle;
+    endcase
+    audio_w_envelope <= (audio_before_envelope * envelope) >> AUDIO_BIT_WIDTH;
+    audio <= (audio_w_envelope[AUDIO_BIT_WIDTH-1:0] >> PERCENT_WIDTH) * note.velocity;
   end
 
 endmodule : Pipeline
