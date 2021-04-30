@@ -43,7 +43,7 @@ module Envelope (
   logic [ENVELOPE_COUNTER_WIDTH-1:0] division_table[(1<<ENVELOPE_COUNTER_WIDTH)-1:0];
 
   initial begin
-    $readmemb("../../lut/adsr_division_table.vm", division_table);
+    $readmemb("../../lut/division_table.vm", division_table);
   end
 
   assign sustain_height = parameters.sustain_level << (AUDIO_BIT_WIDTH - PERCENT_WIDTH);

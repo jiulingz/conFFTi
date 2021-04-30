@@ -4,7 +4,7 @@
 #include <iostream>
 
 constexpr int AUDIO_GENERATION_FREQUENCY = 50000;
-constexpr int PERIOD_WIDTH = 11;
+constexpr int PERIOD_WIDTH = 16;
 constexpr int DATA_WIDTH = 7;
 constexpr char PERIOD_TABLE[] = "period_table.vm";
 

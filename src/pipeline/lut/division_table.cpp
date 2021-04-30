@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-constexpr int PERIOD_WIDTH = 11;
+constexpr int PERIOD_WIDTH = 16;
 constexpr char DIVISION_TABLE[] = "division_table.vm";
 
 /*

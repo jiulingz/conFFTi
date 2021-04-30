@@ -42,17 +42,20 @@ module OscillatorTest ();
 
   // initialization
   initial begin
-    clear      <= 1'b0;
     reset_l    <= 1'b0;
     period     <= 10;
     duty_cycle <= 64;
     @(posedge clock);
-    reset_l <= 1'b1;
+    clear      <= 1'b1;
+    @(posedge clock);
+    reset_l    <= 1'b1;
+    @(posedge clock);
+    clear      <= 1'b0;
   end
 
   // trace
   initial begin
-    repeat (20) @(posedge clock);
+    repeat (20000) @(posedge clock);
     $finish;
   end
 
