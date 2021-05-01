@@ -22,9 +22,9 @@ package CONFIG;
   parameter PERIOD_WIDTH = 16; // 21 = $clog2(50,000 / 27.5), 27.5 = A0 frequency
 
   parameter MAX_TARGET_TICKS = 400000; // 1s => 400000 audio clock clicks
-  parameter ENVELOPE_COUNTER_WIDTH = 16; // $clog2(50,000)
+  parameter ENVELOPE_COUNTER_WIDTH = 19; // $clog2(400,000)
   parameter ENVELOPE_PUSH_BITS = 8;
-  parameter ENVELOPE_CEILING = 16'hffff;
+  parameter ENVELOPE_CEILING = 19'h7ffff;
   parameter PARAM_CEILING = 'h7f;
   
 endpackage : CONFIG

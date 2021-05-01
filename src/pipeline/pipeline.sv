@@ -38,11 +38,7 @@ module Pipeline (
   // period
   logic [PERIOD_WIDTH-1:0] period_table[(1 << DATA_WIDTH)-1:0];
   initial begin
-`ifdef SIMULATION
-    $readmemb("../../lut/period_table.vm", period_table);
-`else
     $readmemb("lut/period_table.vm", period_table);
-`endif
   end
   assign period = period_table[note.note_number];
 
@@ -74,7 +70,7 @@ module Pipeline (
         TRIANGLE: audio_before_envelope <= triangle;
       endcase
       audio_w_envelope <= (audio_before_envelope * envelope) >> AUDIO_BIT_WIDTH;
-      audio <= (audio_w_envelope[AUDIO_BIT_WIDTH-1:0] >> PERCENT_WIDTH) * note.velocity;
+      audio <= (audio_w_envelope[AUDIO_BIT_WIDTH-1:0] * note.velocity) >> PERCENT_WIDTH;
     end
   end
 
