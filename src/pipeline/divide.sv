@@ -6,7 +6,7 @@
 module Divide (
     input  logic          [CONFIG::PERIOD_WIDTH-1:0] dividend,
     input  logic          [CONFIG::PERIOD_WIDTH-1:0] divisor,
-    output long_percent_t                            quotient
+    output CONFIG::long_percent_t                            quotient
 );
 
   import CONFIG::LONG_PERCENT_WIDTH;
