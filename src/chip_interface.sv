@@ -36,15 +36,15 @@ module ChipInterface (
   logic                                    i2s_left_right_clock;
   logic                                    i2s_data;
   logic [CONFIG::AUDIO_BIT_WIDTH-1:0]      audio_out;
+  logic [ CONFIG::NUM_WAVETABLES-1:0]      wave_switch;
   // debug display
   logic [                        5:0][3:0] midi_info;
   logic [                        5:0]      midi_info_en;
   logic [                        3:0]      pipeline_info;
-  logic [                       17:0]      wave_switch;
 
   assign clock_50_000_000 = CLOCK_50;
   assign reset_l          = KEY[0];
-  assign wave_switch      = SW;
+  assign wave_switch      = SW[CONFIG::NUM_WAVETABLES-1:0];
   assign uart_rx          = GPIO[7];
   assign GPIO[0]          = i2s_bit_clock;
   assign GPIO[1]          = i2s_data;

@@ -20,9 +20,7 @@ module OscillatorTest ();
       .clear,
       .period,
       .duty_cycle,
-      .sine,
-      .pulse,
-      .triangle
+      .waves           ({triangle, pulse, sine})
   );
 
   // clock
@@ -36,7 +34,7 @@ module OscillatorTest ();
     @(posedge clock);
     forever begin
       @(posedge clock);
-      $display("\t%10p %10p %10p", sine, pulse, triangle);
+      $display("\t%p %10p %10p %10p", dut.generation_count, sine, pulse, triangle);
     end
   end
 
@@ -48,6 +46,9 @@ module OscillatorTest ();
     duty_cycle <= 64;
     @(posedge clock);
     reset_l <= 1'b1;
+    clear   <= 1'b1;
+    @(posedge clock);
+    clear <= 1'b0;
   end
 
   // trace

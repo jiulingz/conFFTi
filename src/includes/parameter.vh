@@ -6,11 +6,10 @@
 
 package PARAMETER;
 
-  typedef enum logic [1:0] {
-    NONE     = '0,
-    SINE,
-    PULSE,
-    TRIANGLE
+  typedef enum logic [$clog2(CONFIG::NUM_WAVETABLES)-1:0] {
+    SINE     = 2'd0,
+    PULSE    = 2'd1,
+    TRIANGLE = 2'd2
   } wave_t;
 
   typedef enum logic {
@@ -55,7 +54,6 @@ package PARAMETER;
     logic [MIDI::DATA_WIDTH-1:0] release_time;
     logic [MIDI::DATA_WIDTH-1:0] tempo;
     percent_t duty_cycle;
-    wave_t wave;
     dispatcher_mode_t dispatcher_mode;
     arp_mode_t arp_mode;
     arp_rate_t arp_rate;
@@ -70,7 +68,6 @@ package PARAMETER;
     release_time: 'h0,
     tempo: 'h0,
     duty_cycle: 'h40,
-    wave: NONE,
     dispatcher_mode: POLYPHONY,
     arp_mode: ARP_MODE_UP,
     arp_rate: ARP_RATE_QUARTER,
@@ -85,7 +82,6 @@ package PARAMETER;
     PARAM_SUSTAIN_LEVEL,
     PARAM_RELEASE_TIME,
     PARAM_TEMPO,
-    PARAM_WAVE,
     PARAM_DUTY_CYCLE,
     PARAM_DISPATCHER_MODE,
     PARAM_ARP_MODE,

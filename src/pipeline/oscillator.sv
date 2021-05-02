@@ -2,25 +2,21 @@
 
 `include "../includes/config.vh"
 `include "../includes/oscillator.vh"
+`include "../includes/parameter.vh"
 
-module Oscillator (
-    input  logic                                           clock_50_000_000,
-    input  logic                                           reset_l,
-    input  logic                                           clear,
-    input  logic             [   CONFIG::PERIOD_WIDTH-1:0] period,
-    input  CONFIG::percent_t                               duty_cycle,
-    output logic             [CONFIG::AUDIO_BIT_WIDTH-1:0] sine,
-    output logic             [CONFIG::AUDIO_BIT_WIDTH-1:0] pulse,
-    output logic             [CONFIG::AUDIO_BIT_WIDTH-1:0] triangle
+module Oscillator
+  import CONFIG::*;
+(
+    input  logic                                               clock_50_000_000,
+    input  logic                                               reset_l,
+    input  logic                                               clear,
+    input  logic     [  PERIOD_WIDTH-1:0]                      period,
+    input  percent_t                                           duty_cycle,
+    output logic     [NUM_WAVETABLES-1:0][AUDIO_BIT_WIDTH-1:0] waves
 );
 
-  import OSCILLATOR::oscillator_state_t;
-  import CONFIG::long_percent_t;
-  import CONFIG::AUDIO_BIT_WIDTH;
-  import CONFIG::PERIOD_WIDTH;
-  import CONFIG::SYSTEM_CLOCK;
-  import CONFIG::AUDIO_GENERATION_FREQUENCY;
-  import CONFIG::PERCENT_WIDTH;
+  import OSCILLATOR::*;
+  import PARAMETER::*;
 
   oscillator_state_t state;
   long_percent_t     phase;
@@ -76,17 +72,17 @@ module Oscillator (
   Sine s (
       .state,
       .phase,
-      .sine
+      .sine(waves[SINE])
   );
   Pulse p (
       .state,
       .phase,
-      .pulse
+      .pulse(waves[PULSE])
   );
   Triangle t (
       .state,
       .phase,
-      .triangle
+      .triangle(waves[TRIANGLE])
   );
 
 endmodule : Oscillator
