@@ -60,7 +60,7 @@ module ParameterControlTest;
     data_in_ready <= 1'b0;
     repeat (20) @(posedge clock);
     data_in_ready <= 1'b1;
-    data_in       <= {1'b0, TEMPO};
+    data_in       <= {1'b0, MODULATION};
     @(posedge clock);
     data_in_ready <= 1'b0;
     repeat (20) @(posedge clock);

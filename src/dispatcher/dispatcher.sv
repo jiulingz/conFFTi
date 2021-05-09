@@ -47,6 +47,4 @@ module Dispatcher
       .pipeline_notes_ready
   );
 
-  // TODO: (jiulingz) add arpegiator
-
 endmodule : Dispatcher

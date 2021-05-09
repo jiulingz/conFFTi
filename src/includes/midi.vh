@@ -42,14 +42,19 @@ package MIDI;
   } note_change_t;
 
   typedef enum logic [DATA_WIDTH-1:0] {
-    TEMPO      = 7'd21,
-    UNISON     = 7'd22,
-    DUTY_CYCLE = 7'd23,
-    ATTACK     = 7'd24,
-    DECAY      = 7'd25,
-    SUSTAIN    = 7'd26,
-    RELEASE    = 7'd27,
-    VOLUME     = 7'd28
+    MODULATION  = 7'h01,
+    UNUSED_KNOB = 7'h15,
+    UNISON      = 7'h16,
+    DUTY_CYCLE  = 7'h17,
+    ATTACK      = 7'h18,
+    DECAY       = 7'h19,
+    SUSTAIN     = 7'h1A,
+    RELEASE     = 7'h1B,
+    VOLUME      = 7'h1C,
+    UNUSED_PAD1 = 7'h68,
+    UNUSED_PAD2 = 7'h69,
+    PLAY        = 7'h73,
+    RECORD      = 7'h75
   } controller_t;
   typedef logic [DATA_WIDTH-1:0] value_t;
   typedef struct packed {

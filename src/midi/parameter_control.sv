@@ -17,7 +17,6 @@ module ParameterControl (
   control_change_t control_change;
   assign control_change = {message.data_byte1, message.data_byte2};
 
-  // TODO: (jiulingz) add arpegiator parameter
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
     if (!reset_l) begin
       parameters        <= DEFAULT_PARAMETERS;
@@ -26,10 +25,6 @@ module ParameterControl (
       unique case (message.message_type)
         CONTROL_CHANGE: begin
           unique case (control_change.controller_number)
-            TEMPO: begin
-              parameters.tempo  <= control_change.value;
-              parameter_changes <= PARAM_TEMPO;
-            end
             UNISON: begin
               parameters.unison_detune <= control_change.value;
               parameter_changes        <= PARAM_UNISON_DETUNE;
