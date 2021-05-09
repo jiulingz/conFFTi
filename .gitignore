@@ -16,6 +16,7 @@
 !src/mixer/
 
 !src/*/lut/
+!src/*/lut/raw/
 
 !src/*/tests/
 !src/*/tests/simulation/
@@ -45,8 +46,9 @@
 # Allow for C++ and hex files
 !*.cpp
 
-# Allow for memory files
+# Allow for data files
 !*.vm
+!*.raw
 
 # Allow for project assignment and timing files
 !*.qpf

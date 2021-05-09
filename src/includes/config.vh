@@ -31,7 +31,7 @@ package CONFIG;
 
   parameter DETUNE_SHIFTS = 2;  // symmetrical shifts increasing and decreasing period
 
-  parameter NUM_WAVETABLES = 3;
+  parameter NUM_WAVETABLES = 8;
 
   parameter ENVELOPE_MAX_TICKS = 2 * SYSTEM_CLOCK; // 2s
 

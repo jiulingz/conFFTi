@@ -353,6 +353,11 @@ set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name VERILOG_INPUT_VERSION SYSTEMVERILOG_2005
 set_global_assignment -name VERILOG_SHOW_LMF_MAPPING_MESSAGES OFF
+set_global_assignment -name SYSTEMVERILOG_FILE pipeline/violin.sv
+set_global_assignment -name SYSTEMVERILOG_FILE pipeline/viola.sv
+set_global_assignment -name SYSTEMVERILOG_FILE pipeline/trumpet.sv
+set_global_assignment -name SYSTEMVERILOG_FILE pipeline/french_horn.sv
+set_global_assignment -name SYSTEMVERILOG_FILE pipeline/cello.sv
 set_global_assignment -name SYSTEMVERILOG_FILE pipeline/envelope.sv
 set_global_assignment -name SYSTEMVERILOG_FILE device/seven_segment_driver.sv
 set_global_assignment -name SYSTEMVERILOG_FILE pipeline/sine.sv

@@ -68,19 +68,52 @@ module Oscillator
   );
 
   Sine s (
+      .clock(clock_50_000_000),
       .state,
       .phase,
       .sine(waves[SINE])
   );
   Pulse p (
+      .clock(clock_50_000_000),
       .state,
       .phase,
       .pulse(waves[PULSE])
   );
   Triangle t (
+      .clock(clock_50_000_000),
       .state,
       .phase,
       .triangle(waves[TRIANGLE])
+  );
+  Cello c (
+      .clock(clock_50_000_000),
+      .state,
+      .phase,
+      .cello(waves[CELLO])
+  );
+  FrenchHorn f (
+      .clock(clock_50_000_000),
+      .state,
+      .phase,
+      .french_horn(waves[FRENCH_HORN])
+  );
+  Trumpet tp (
+      .clock(clock_50_000_000),
+      .state,
+      .phase,
+      .trumpet(waves[TRUMPET])
+  );
+  Viola va (
+      .clock(clock_50_000_000),
+      .state,
+      .phase,
+      .viola(waves[VIOLA])
+  );
+  Violin vn (
+      .clock(clock_50_000_000),
+      .state,
+      .phase,
+      .violin(waves[VIOLIN])
   );
 
 endmodule : Oscillator

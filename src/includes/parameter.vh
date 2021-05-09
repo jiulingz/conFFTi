@@ -7,9 +7,14 @@
 package PARAMETER;
 
   typedef enum logic [$clog2(CONFIG::NUM_WAVETABLES)-1:0] {
-    SINE     = 2'd0,
-    PULSE    = 2'd1,
-    TRIANGLE = 2'd2
+    SINE        = 3'd0,
+    PULSE       = 3'd1,
+    TRIANGLE    = 3'd2,
+    CELLO       = 3'd3,
+    FRENCH_HORN = 3'd4,
+    TRUMPET     = 3'd5,
+    VIOLA       = 3'd6,
+    VIOLIN      = 3'd7
   } wave_t;
 
   typedef enum logic {
