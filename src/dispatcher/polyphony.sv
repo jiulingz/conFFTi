@@ -76,8 +76,6 @@ module Polyphony
         OFF: begin
           if (is_playing) begin
             pipeline_status[index_playing]       <= OFF;
-            pipeline_note_numbers[index_playing] <= note.note_number;
-            // pipeline_velocities[index_playing]   <= note.velocity;
             pipeline_notes_ready[index_playing]  <= '1;
           end
         end

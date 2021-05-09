@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-constexpr int PERIOD_WIDTH = 11;
+constexpr int DIVISION_WIDTH = 16;
 constexpr char DIVISION_TABLE[] = "division_table.vm";
 
 /*
@@ -11,9 +11,9 @@ constexpr char DIVISION_TABLE[] = "division_table.vm";
  */
 void make_division_table(const char *filename) {
 	std::ofstream division_table{filename};
-	for (int i = 0; i < (1 << PERIOD_WIDTH); i++) {
-		std::bitset<PERIOD_WIDTH> recipocal{i == 0 ? 0
-		                                           : (1 << PERIOD_WIDTH) / i};
+	for (int i = 0; i < (1 << DIVISION_WIDTH); i++) {
+		std::bitset<DIVISION_WIDTH> recipocal{i == 0 ? 0
+		                                           : (1 << DIVISION_WIDTH) / i};
 		division_table << recipocal << std::endl;
 	}
 }

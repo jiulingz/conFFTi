@@ -28,11 +28,11 @@ module Oscillator
 `endif
   logic [  $clog2(GENERATION_TICKS)-1:0] generation_count;
 
-  logic [              PERIOD_WIDTH-1:0] count;
-  logic [              PERIOD_WIDTH-1:0] duty_ticks;
-  logic [              PERIOD_WIDTH-1:0] target           [$bits(state):0];
+  logic [PERIOD_WIDTH-1:0] count;
+  logic [PERIOD_WIDTH-1:0] duty_ticks;
+  logic [PERIOD_WIDTH-1:0] target[state.num()-1:0];
   assign target[OSCILLATOR::FRONT] = duty_ticks;
-  assign target[OSCILLATOR::BACK] = period - duty_ticks;
+  assign target[OSCILLATOR::BACK]  = period - duty_ticks;
 
   logic [PERIOD_WIDTH+PERCENT_WIDTH-1:0] high_precision;
   assign high_precision = period * duty_cycle;
@@ -40,13 +40,13 @@ module Oscillator
 
   always_ff @(posedge clock_50_000_000, negedge reset_l) begin
     if (!reset_l) begin
-      state                     <= OSCILLATOR::FRONT;
-      count                     <= '0;
-      generation_count          <= '0;
+      state            <= OSCILLATOR::FRONT;
+      count            <= '0;
+      generation_count <= '0;
     end else if (clear) begin
-      state                     <= OSCILLATOR::FRONT;
-      count                     <= '0;
-      generation_count          <= '0;
+      state            <= OSCILLATOR::FRONT;
+      count            <= '0;
+      generation_count <= '0;
     end else if (target[state] == 0 || count >= target[state] - 1) begin
       state            <= state.next();
       count            <= '0;

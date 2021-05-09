@@ -47,7 +47,7 @@ module Pipeline (
   );
 
   // detune
-  localparam SHIFT_WIDTH = PERIOD_WIDTH+PERIOD_WIDTH+DATA_WIDTH;
+  localparam SHIFT_WIDTH = PERIOD_WIDTH + PERIOD_WIDTH + DATA_WIDTH;
   logic [SHIFT_WIDTH-1:0] detune_shift;
   assign detune_shift = period * period * parameters.unison_detune;
 
@@ -60,7 +60,7 @@ module Pipeline (
           .clock_50_000_000,
           .reset_l,
           .clear,
-          .period    (`min(PERIOD_MAX, period +  (i + 1) * detune_shift[SHIFT_WIDTH-1-:PERIOD_WIDTH])),
+          .period(`min(PERIOD_MAX, period + (i + 1) * detune_shift[SHIFT_WIDTH-1-:PERIOD_WIDTH])),
           .duty_cycle(parameters.duty_cycle),
           .waves(detune_high[i])
       );
@@ -68,65 +68,54 @@ module Pipeline (
           .clock_50_000_000,
           .reset_l,
           .clear,
-          .period    (`max(PERIOD_MIN, period - (i + 1) * detune_shift[SHIFT_WIDTH-1-:PERIOD_WIDTH])),
+          .period(`max(PERIOD_MIN, period - (i + 1) * detune_shift[SHIFT_WIDTH-1-:PERIOD_WIDTH])),
           .duty_cycle(parameters.duty_cycle),
           .waves(detune_low[i])
       );
     end
   endgenerate
-  logic [NUM_WAVETABLES-1:0][AUDIO_BIT_WIDTH-1:0] detune;
-  logic [AUDIO_BIT_WIDTH+$clog2(DETUNE_SHIFTS*2)-1:0] collect;
+
+  logic [NUM_WAVETABLES-1:0][AUDIO_BIT_WIDTH-1:0] detuned_audio;
+  localparam COLLECT_WIDTH = AUDIO_BIT_WIDTH + $clog2(DETUNE_SHIFTS * 2);
+  logic [COLLECT_WIDTH-1:0] collect;
   always_comb begin
     for (int i = 0; i < NUM_WAVETABLES; i++) begin
       collect = 0;
       for (int j = 0; j < DETUNE_SHIFTS; j++) begin
         collect += detune_high[j][i] + detune_low[j][i];
       end
-      if (parameters.unison_detune == 0) detune[i] = waves[i];
-      else detune[i] = (5 * waves[i] + 3 * collect[AUDIO_BIT_WIDTH+$clog2(DETUNE_SHIFTS*2)-1-:AUDIO_BIT_WIDTH]) >> 3;
+      if (parameters.unison_detune == 0) detuned_audio[i] = waves[i];
+      else begin
+        detuned_audio[i] = (5 * waves[i] + 3 * collect[COLLECT_WIDTH-1-:AUDIO_BIT_WIDTH]) >> 3;
+      end
     end
   end
 
   // adsr
-  logic [AUDIO_BIT_WIDTH-1:0] envelope;
+  long_percent_t envelope;
   logic envelope_end;
   Envelope env (
-    .clock_50_000_000,
-    .reset_l,
-    .parameters,
-    .note_on  (note_ready && note.status == ON),
-    .note_off (note_ready && note.status == OFF),
-    .envelope,
-    .envelope_end
+      .clock_50_000_000,
+      .reset_l,
+      .parameters,
+      .note_on (note_ready && note.status == ON),
+      .note_off(note_ready && note.status == OFF),
+      .envelope
   );
-
-  // temp values
-  logic [AUDIO_BIT_WIDTH-1:0] audio_before_envelope;
-  logic [AUDIO_BIT_WIDTH+AUDIO_BIT_WIDTH-1:0] audio_w_envelope;
-
-  always_ff @(posedge clock_50_000_000) begin
-    if (envelope_end) begin
-      audio <= '0;
-    end else begin
-      unique case (parameters.wave)
-        NONE:     audio_before_envelope <= '0;
-        SINE:     audio_before_envelope <= sine;
-        PULSE:    audio_before_envelope <= pulse;
-        TRIANGLE: audio_before_envelope <= triangle;
-      endcase
-      audio_w_envelope <= (audio_before_envelope * envelope) >> AUDIO_BIT_WIDTH;
-      audio <= (audio_w_envelope[AUDIO_BIT_WIDTH-1:0] >> PERCENT_WIDTH) * note.velocity;
+  logic [NUM_WAVETABLES-1:0][AUDIO_BIT_WIDTH-1:0] enveloped_audio;
+  logic [AUDIO_BIT_WIDTH+LONG_PERCENT_WIDTH+PERCENT_WIDTH-1:0] high_precision;
+  always_comb begin
+    for (int i = 0; i < NUM_WAVETABLES; i++) begin
+      high_precision = detuned_audio[i] * envelope * note.velocity;
+      enveloped_audio[i] = high_precision[AUDIO_BIT_WIDTH+LONG_PERCENT_WIDTH+PERCENT_WIDTH-1-:AUDIO_BIT_WIDTH];
     end
   end
 
+  // wave selection
   always_comb begin
-    if (note.status == OFF) begin
-      audio = '0;
-    end else begin
-      audio = '0;
-      for (int i = 0; i < NUM_WAVETABLES; i++) begin
-        if (wave_switch[i]) audio = detune[i];
-      end
+    audio = '0;
+    for (int i = 0; i < NUM_WAVETABLES; i++) begin
+      if (wave_switch[i]) audio = enveloped_audio[i];
     end
   end
 

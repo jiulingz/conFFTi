@@ -18,52 +18,52 @@ module DivideTest ();
   );
 
   initial begin
-    {dividend, divisor, desired} = {11'd1, 11'd10, 8'd25};
+    {dividend, divisor, desired} = {16'd1, 16'd10, 8'd25};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
 
-    {dividend, divisor, desired} = {11'd2, 11'd10, 8'd51};
+    {dividend, divisor, desired} = {16'd2, 16'd10, 8'd51};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
 
-    {dividend, divisor, desired} = {11'd3, 11'd10, 8'd76};
+    {dividend, divisor, desired} = {16'd3, 16'd10, 8'd76};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
 
-    {dividend, divisor, desired} = {11'd4, 11'd10, 8'd102};
+    {dividend, divisor, desired} = {16'd4, 16'd10, 8'd102};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
 
-    {dividend, divisor, desired} = {11'd5, 11'd10, 8'd127};
+    {dividend, divisor, desired} = {16'd5, 16'd10, 8'd127};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
 
-    {dividend, divisor, desired} = {11'd6, 11'd10, 8'd153};
+    {dividend, divisor, desired} = {16'd6, 16'd10, 8'd153};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
 
-    {dividend, divisor, desired} = {11'd7, 11'd10, 8'd178};
+    {dividend, divisor, desired} = {16'd7, 16'd10, 8'd179};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
 
-    {dividend, divisor, desired} = {11'd8, 11'd10, 8'd204};
+    {dividend, divisor, desired} = {16'd8, 16'd10, 8'd204};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
 
-    {dividend, divisor, desired} = {11'd9, 11'd10, 8'd229};
+    {dividend, divisor, desired} = {16'd9, 16'd10, 8'd230};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
 
-    {dividend, divisor, desired} = {11'd10, 11'd10, 8'd255};
+    {dividend, divisor, desired} = {16'd10, 16'd10, 8'd255};
     #1;
     if (quotient != desired) $display("\t%p / %p = %p != %p", dividend, divisor, desired, quotient);
     #1
