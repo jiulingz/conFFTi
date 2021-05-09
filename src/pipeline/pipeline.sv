@@ -87,7 +87,37 @@ module Pipeline (
     end
   end
 
-  // TODO: (hongrunz) add ADSR + velocity
+  // adsr
+  logic [AUDIO_BIT_WIDTH-1:0] envelope;
+  logic envelope_end;
+  Envelope env (
+    .clock_50_000_000,
+    .reset_l,
+    .parameters,
+    .note_on  (note_ready && note.status == ON),
+    .note_off (note_ready && note.status == OFF),
+    .envelope,
+    .envelope_end
+  );
+
+  // temp values
+  logic [AUDIO_BIT_WIDTH-1:0] audio_before_envelope;
+  logic [AUDIO_BIT_WIDTH+AUDIO_BIT_WIDTH-1:0] audio_w_envelope;
+
+  always_ff @(posedge clock_50_000_000) begin
+    if (envelope_end) begin
+      audio <= '0;
+    end else begin
+      unique case (parameters.wave)
+        NONE:     audio_before_envelope <= '0;
+        SINE:     audio_before_envelope <= sine;
+        PULSE:    audio_before_envelope <= pulse;
+        TRIANGLE: audio_before_envelope <= triangle;
+      endcase
+      audio_w_envelope <= (audio_before_envelope * envelope) >> AUDIO_BIT_WIDTH;
+      audio <= (audio_w_envelope[AUDIO_BIT_WIDTH-1:0] >> PERCENT_WIDTH) * note.velocity;
+    end
+  end
 
   always_comb begin
     if (note.status == OFF) begin

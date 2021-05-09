@@ -27,6 +27,12 @@ package CONFIG;
 
   parameter NUM_WAVETABLES = 3;
 
+  parameter MAX_TARGET_TICKS = 50000; // 1s => 50M system ticks => 50,000 audio clock ticks
+  parameter ENVELOPE_COUNTER_WIDTH = 16; // $clog2(50,000)
+  parameter ENVELOPE_PUSH_BITS = 8;
+  parameter ENVELOPE_CEILING = 16'hffff;
+  parameter PARAM_CEILING = 'h7f;
+  
 endpackage : CONFIG
 
 `endif  /* CONFIG_VH_ */
