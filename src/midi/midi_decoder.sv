@@ -41,78 +41,69 @@ module MIDIDecoder
         STATUS_BYTE: begin
           message_ready <= '0;
           if (data_in_ready)
-            unique case (byte_type)
-              MIDI::STATUS: begin
-                unique case (message_type)
-                  NOTE_ON, NOTE_OFF, CONTROL_CHANGE: begin
-                    state               <= DATA_BYTE_1;
-                    buffer.message_type <= message_type;
-                  end
-                  default: begin  // unsupported status
-                    state  <= STATUS_BYTE;
-                    buffer <= '0;
-                  end
-                endcase
-              end
-              default: begin  // invalid byte
-                state <= state;
-              end
-            endcase
-          else state <= state;
+            if (byte_type == MIDI::STATUS)
+              unique case (message_type)
+                NOTE_ON, NOTE_OFF, CONTROL_CHANGE: begin
+                  state               <= DATA_BYTE_1;
+                  buffer.message_type <= message_type;
+                end
+                default: begin  // unsupported status
+                  state  <= STATUS_BYTE;
+                  buffer <= '0;
+                end
+              endcase
+            else begin
+              state  <= STATUS_BYTE;
+              buffer <= '0;
+            end
         end
         DATA_BYTE_1: begin
           if (data_in_ready)
-            unique case (byte_type)
-              MIDI::DATA: begin
-                unique case (buffer.message_type)
-                  NOTE_ON, NOTE_OFF, CONTROL_CHANGE: begin
-                    state             <= DATA_BYTE_2;
-                    buffer.data_byte1 <= data_byte;
-                  end
-                  default: begin  // unsupported status
-                    state  <= STATUS_BYTE;
-                    buffer <= '0;
-                  end
-                endcase
-              end
-              default: begin  // invalid byte
-                state <= state;
-              end
-            endcase
-          else state <= state;
+            if (byte_type == MIDI::DATA)
+              unique case (buffer.message_type)
+                NOTE_ON, NOTE_OFF, CONTROL_CHANGE: begin
+                  state             <= DATA_BYTE_2;
+                  buffer.data_byte1 <= data_byte;
+                end
+                default: begin  // unsupported status
+                  state  <= STATUS_BYTE;
+                  buffer <= '0;
+                end
+              endcase
+            else begin
+              state  <= STATUS_BYTE;
+              buffer <= '0;
+            end
         end
         DATA_BYTE_2: begin
           if (data_in_ready)
-            unique case (byte_type)
-              MIDI::DATA: begin
-                unique case (buffer.message_type)
-                  NOTE_ON: begin
-                    state             <= FINISH;
-                    buffer.data_byte2 <= data_byte;
-                    if (data_byte == 'b0) begin
-                      // NOTE_ON with 0 velocity is equivalent to NOTE_OFF
-                      buffer.message_type <= NOTE_OFF;
-                    end
+            if (byte_type == MIDI::DATA)
+              unique case (buffer.message_type)
+                NOTE_ON: begin
+                  state             <= FINISH;
+                  buffer.data_byte2 <= data_byte;
+                  if (data_byte == 'b0) begin
+                    // NOTE_ON with 0 velocity is equivalent to NOTE_OFF
+                    buffer.message_type <= NOTE_OFF;
                   end
-                  NOTE_OFF: begin
-                    state             <= FINISH;
-                    buffer.data_byte2 <= '0;
-                  end
-                  CONTROL_CHANGE: begin
-                    state             <= FINISH;
-                    buffer.data_byte2 <= data_byte;
-                  end
-                  default: begin  // unsupported status
-                    state  <= STATUS_BYTE;
-                    buffer <= '0;
-                  end
-                endcase
-              end
-              default: begin  // invalid byte
-                state <= state;
-              end
-            endcase
-          else state <= state;
+                end
+                NOTE_OFF: begin
+                  state             <= FINISH;
+                  buffer.data_byte2 <= '0;
+                end
+                CONTROL_CHANGE: begin
+                  state             <= FINISH;
+                  buffer.data_byte2 <= data_byte;
+                end
+                default: begin  // unsupported status
+                  state  <= STATUS_BYTE;
+                  buffer <= '0;
+                end
+              endcase
+            else begin
+              state  <= STATUS_BYTE;
+              buffer <= '0;
+            end
         end
         FINISH: begin
           state         <= STATUS_BYTE;

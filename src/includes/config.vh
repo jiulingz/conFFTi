@@ -20,6 +20,8 @@ package CONFIG;
 
   parameter AUDIO_GENERATION_FREQUENCY = 50000;  // 50 KHz
   parameter PERIOD_WIDTH = 11;  // 21 = $clog2(50,000 / 27.5), 27.5 = A0 frequency
+  localparam logic [PERIOD_WIDTH-1:0] PERIOD_MAX = '1;
+  localparam logic [PERIOD_WIDTH-1:0] PERIOD_MIN = '0;
 
   parameter DETUNE_SHIFTS = 2;  // symmetrical shifts increasing and decreasing period
 

@@ -3,6 +3,9 @@
 `include "../includes/config.vh"
 `include "../includes/midi.vh"
 
+`define min(X, Y) ((X < Y) ? X : Y)
+`define max(X, Y) ((X > Y) ? X : Y)
+
 module Pipeline (
     input  logic                                                       clock_50_000_000,
     input  logic                                                       reset_l,
@@ -44,10 +47,12 @@ module Pipeline (
   );
 
   // detune
+  localparam SHIFT_WIDTH = PERIOD_WIDTH+PERIOD_WIDTH+DATA_WIDTH;
+  logic [SHIFT_WIDTH-1:0] detune_shift;
+  assign detune_shift = period * period * parameters.unison_detune;
+
   logic [DETUNE_SHIFTS-1:0][NUM_WAVETABLES-1:0][AUDIO_BIT_WIDTH-1:0] detune_high;
   logic [DETUNE_SHIFTS-1:0][NUM_WAVETABLES-1:0][AUDIO_BIT_WIDTH-1:0] detune_low;
-  logic [(PERIOD_WIDTH-1)-1:0] detune_diff;
-  assign detune_diff = ((period * parameters.unison_detune) >> PERCENT_WIDTH) >> 1;
   generate
     genvar i;
     for (i = 0; i < DETUNE_SHIFTS; i++) begin : detunes
@@ -55,17 +60,17 @@ module Pipeline (
           .clock_50_000_000,
           .reset_l,
           .clear,
-          .period    (period + i * detune_diff),
+          .period    (`min(PERIOD_MAX, period +  (i + 1) * detune_shift[SHIFT_WIDTH-1-:PERIOD_WIDTH])),
           .duty_cycle(parameters.duty_cycle),
-          .waves     (detune_high[i])
+          .waves(detune_high[i])
       );
       Oscillator detune2 (
           .clock_50_000_000,
           .reset_l,
           .clear,
-          .period    (period - i * detune_diff),
+          .period    (`max(PERIOD_MIN, period - (i + 1) * detune_shift[SHIFT_WIDTH-1-:PERIOD_WIDTH])),
           .duty_cycle(parameters.duty_cycle),
-          .waves     (detune_low[i])
+          .waves(detune_low[i])
       );
     end
   endgenerate
@@ -75,9 +80,10 @@ module Pipeline (
     for (int i = 0; i < NUM_WAVETABLES; i++) begin
       collect = 0;
       for (int j = 0; j < DETUNE_SHIFTS; j++) begin
-        collect += detune_high[j] + detune_low[j];
+        collect += detune_high[j][i] + detune_low[j][i];
       end
-      detune[i] = (waves[i] + collect >> $clog2(DETUNE_SHIFTS*2)) >> 1;
+      if (parameters.unison_detune == 0) detune[i] = waves[i];
+      else detune[i] = (5 * waves[i] + 3 * collect[AUDIO_BIT_WIDTH+$clog2(DETUNE_SHIFTS*2)-1-:AUDIO_BIT_WIDTH]) >> 3;
     end
   end
 
