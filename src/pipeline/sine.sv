@@ -4,6 +4,7 @@
 `include "../includes/oscillator.vh"
 
 module Sine (
+    input                                                               clock,
     input  OSCILLATOR::oscillator_state_t                               state,
     input  CONFIG::long_percent_t                                       phase,
     output logic                          [CONFIG::AUDIO_BIT_WIDTH-1:0] sine
@@ -18,10 +19,10 @@ module Sine (
 `endif
   end
 
-  always_comb begin
+  always_ff @(posedge clock) begin
     unique case (state)
-      OSCILLATOR::FRONT: sine = sine_table[phase];
-      OSCILLATOR::BACK:  sine = sine_table[~phase];
+      OSCILLATOR::FRONT: sine <= sine_table[phase];
+      OSCILLATOR::BACK:  sine <= sine_table[~phase];
     endcase
   end
 

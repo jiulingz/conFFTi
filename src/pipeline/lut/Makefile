@@ -6,3 +6,4 @@
 sine_table:
 period_table:
 division_table:
+wave_table:

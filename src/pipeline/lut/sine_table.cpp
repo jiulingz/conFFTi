@@ -5,7 +5,7 @@
 #include <numbers>
 
 constexpr int LONG_PERCENT_WIDTH = 8;
-constexpr int AUDIO_BIT_WIDTH = 24;
+constexpr int AUDIO_BIT_WIDTH = 16;
 constexpr char SINE_TABLE[] = "sine_table.vm";
 
 /*

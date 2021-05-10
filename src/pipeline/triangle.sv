@@ -5,6 +5,7 @@
 
 
 module Triangle (
+    input                                                               clock,
     input  OSCILLATOR::oscillator_state_t                               state,
     input  CONFIG::long_percent_t                                       phase,
     output logic                          [CONFIG::AUDIO_BIT_WIDTH-1:0] triangle
@@ -13,10 +14,10 @@ module Triangle (
   import CONFIG::LONG_PERCENT_WIDTH;
   import CONFIG::AUDIO_BIT_WIDTH;
 
-  always_comb begin
+  always_ff @(posedge clock) begin
     unique case (state)
-      OSCILLATOR::FRONT: triangle = phase << (AUDIO_BIT_WIDTH - LONG_PERCENT_WIDTH);
-      OSCILLATOR::BACK:  triangle = ~phase << (AUDIO_BIT_WIDTH - LONG_PERCENT_WIDTH);
+      OSCILLATOR::FRONT: triangle <= phase << (AUDIO_BIT_WIDTH - LONG_PERCENT_WIDTH);
+      OSCILLATOR::BACK:  triangle <= ~phase << (AUDIO_BIT_WIDTH - LONG_PERCENT_WIDTH);
     endcase
   end
 
