@@ -17,23 +17,39 @@ module Dispatcher
     output logic                         [PIPELINE_COUNT-1:0] pipeline_notes_ready
 );
 
+  note_change_t replay;
+  logic         replay_ready;
+  Recorder recorder (
+      .clock_50_000_000,
+      .reset_l,
+      .message,
+      .message_ready,
+      .replay,
+      .replay_ready
+  );
+
   note_change_t note;
   logic         note_ready;
   always_comb begin
-    unique case (message.message_type)
-      NOTE_ON: begin
-        note_ready = message_ready;
-        note = '{status: ON, note_number: message.data_byte1, velocity   : message.data_byte2};
-      end
-      NOTE_OFF: begin
-        note_ready = message_ready;
-        note = '{status: OFF, note_number: message.data_byte1, velocity   : message.data_byte2};
-      end
-      default: begin
-        note_ready = '0;
-        note       = '0;
-      end
-    endcase
+    if (replay_ready) begin
+      note_ready = replay_ready;
+      note       = replay;
+    end else begin
+      unique case (message.message_type)
+        NOTE_ON: begin
+          note_ready = message_ready;
+          note       = '{status: ON, note_number: message.data_byte1, velocity: message.data_byte2};
+        end
+        NOTE_OFF: begin
+          note_ready = message_ready;
+          note = '{status: OFF, note_number: message.data_byte1, velocity: message.data_byte2};
+        end
+        default: begin
+          note_ready = '0;
+          note       = '0;
+        end
+      endcase
+    end
   end
 
   Polyphony #(

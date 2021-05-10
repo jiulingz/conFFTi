@@ -34,7 +34,7 @@ package PARAMETER;
     decay_time: 'h0,
     sustain_level: 'h7F,
     release_time: 'h0,
-    duty_cycle: 'h40,
+    duty_cycle: 'h40
   };
   typedef enum logic [3:0] {
     PARAM_NONE            = '0,
@@ -44,7 +44,7 @@ package PARAMETER;
     PARAM_DECAY_TIME,
     PARAM_SUSTAIN_LEVEL,
     PARAM_RELEASE_TIME,
-    PARAM_DUTY_CYCLE,
+    PARAM_DUTY_CYCLE
   } parameter_change_t;
 
 endpackage : PARAMETER

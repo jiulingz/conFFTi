@@ -8,7 +8,6 @@ module ParameterControlTest;
 
   logic                    clock;
   logic                    reset_l;
-  logic                    ready;
   message_t                message;
   logic                    message_ready;
   logic              [7:0] data_in;

@@ -35,6 +35,8 @@ package CONFIG;
 
   parameter ENVELOPE_MAX_TICKS = 2 * SYSTEM_CLOCK; // 2s
 
+  parameter RECORD_LENGTH = 8;
+
 endpackage : CONFIG
 
 `endif  /* CONFIG_VH_ */
